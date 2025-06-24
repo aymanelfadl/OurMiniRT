@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "cstdlib": "c",
+        "scene_math.h": "c",
+        "minirt_app.h": "c"
+    }
+}
