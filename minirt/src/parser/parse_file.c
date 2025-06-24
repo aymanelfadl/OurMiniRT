@@ -1,29 +1,7 @@
-#include "../includes/minirt_app.h"
-#include "../includes/parser.h"
+#include "../../includes/minirt_app.h"
+#include "../../includes/parser.h"
 #include <stdio.h>
-
-void	init_parser_and_scene(t_parser *parser, t_scene *scene)
-{
-	parser->line = NULL;
-	parser->tokens = NULL;
-	parser->line_count = 0;
-	parser->has_camera = FALSE;
-	scene->num_objects = 0;
-	scene->camera.fov = 0.0;
-	scene->has_ambient = FALSE;
-	scene->has_light = FALSE;
-	scene->ambient.ratio = 0.0;
-	scene->ambient.color.x = 0.0;
-	scene->ambient.color.y = 0.0;
-	scene->ambient.color.z = 0.0;
-	scene->light.position.x = 0.0;
-	scene->light.position.y = 0.0;
-	scene->light.position.z = 0.0;
-	scene->light.brightness = 0.0;
-	scene->light.color.x = 0.0;
-	scene->light.color.y = 0.0;
-	scene->light.color.z = 0.0;
-}
+#include "../../libft/libft.h"
 
 int	validate_extension_and_permission(const char *filename, t_scene *scene)
 {
@@ -141,7 +119,8 @@ t_scene	*parse_scene_file(char *filename)
 	scene = (t_scene *)malloc(sizeof(t_scene));
 	if (!scene)
 		return (NULL);
-	init_parser_and_scene(&parser, scene);
+	ft_bzero(scene, 0);
+	ft_bzero(&parser, 0);
 	fd = validate_extension_and_permission(filename, scene);
 	if (fd == -1)
 		return (NULL);

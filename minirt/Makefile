@@ -1,40 +1,37 @@
-# Compiler and flags
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-
-# Executable name
-NAME = cub3d
-
-# Directories
-LIBFT_DIR = libft
-
-# Libs
-LIBFT = $(LIBFT_DIR)/libft.a
-LIBFT_FLAGS = -L$(LIBFT_DIR) -lft
 MLX_FLAGS = -lmlx -lXext -lX11 -lm -lbsd
 
-# Includes
-INCLUDES = -I includes -I $(LIBFT_DIR)
+NAME = minirt
 
-# Source files
-PARSING = srcs/parser/add_to_scene.c \
-          srcs/parser/parse_colors.c \
-          srcs/parser/parse_double.c \
-          srcs/parser/parse_element.c \
-          srcs/parser/parser_file.c \
-          srcs/parser/parse_vectors.c \
-          srcs/parser/parser_utils.c \
-          srcs/parser/validate_elements.c \
-          srcs/parser/validate_scene.c
+LIBFT_DIR = libft
 
-SRC = srcs/main.c srcs/$(PARSING)
+LIBFT = $(LIBFT_DIR)/libft.a
+
+
+PARSING = src/parser/add_to_scene.c \
+          src/parser/parse_colors.c \
+          src/parser/parse_double.c \
+          src/parser/parse_elements.c \
+          src/parser/parse_file.c \
+          src/parser/parse_vectors.c \
+          src/parser/parser_utils.c \
+          src/parser/validate_elements.c \
+          src/parser/validate_scene.c
+
+UTILS = src/utils/math_utils.c \
+        src/utils/matrix.c \
+        src/utils/transforms.c \
+        src/utils/vector_ops.c
+
+
+SRC = src/main.c $(PARSING) $(UTILS)
 OBJ = $(SRC:.c=.o)
 
-# Build rules
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(INCLUDES) $(LIBFT_FLAGS) $(MLX_FLAGS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ)  $(LIBFT) $(MLX_FLAGS) -o $(NAME)
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)

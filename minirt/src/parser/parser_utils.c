@@ -1,4 +1,4 @@
-#include "../includes/minirt_app.h"
+#include "../../includes/minirt_app.h"
 
 /**
  * Free an array of strings

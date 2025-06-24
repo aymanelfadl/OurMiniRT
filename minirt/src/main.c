@@ -1,7 +1,6 @@
-#include "../includes/events.h"
+#include "../includes/parser.h"
+#include "../includes/scene_math.h"
 #include "../includes/minirt_app.h"
-#include "../includes/render_utils.h"
-#include <stdio.h>
 
 t_scene	*g_scene = NULL;
 
@@ -88,21 +87,20 @@ void	set_scene_for_transforms(t_scene *scene)
 	g_scene = scene;
 }
 
-static void	init_mlx_and_window(t_vars *vars)
-{
-	vars->mlx = mlx_init();
-	if (!vars->mlx)
-		error_exit("Error: MLX initialization failed\n");
-	vars->win = mlx_new_window(vars->mlx, WIDTH, HEIGHT, "miniRT");
-	if (!vars->win)
-		error_exit("Error: Window creation failed\n");
-	create_image(vars);
-}
+// static void	init_mlx_and_window(t_vars *vars)
+// {
+// 	vars->mlx = mlx_init();
+// 	if (!vars->mlx)
+// 		error_exit("Error: MLX initialization failed\n");
+// 	vars->win = mlx_new_window(vars->mlx, WIDTH, HEIGHT, "miniRT");
+// 	if (!vars->win)
+// 		error_exit("Error: Window creation failed\n");
+// 	create_image(vars);
+// }
 
 int	main(int argc, char **argv)
 {
 	t_scene	*scene;
-	t_vars	vars;
 
 	if (argc != 2)
 		error_exit(ERR_ARGS);
@@ -110,12 +108,7 @@ int	main(int argc, char **argv)
 	if (!scene)
 		error_exit(ERR_SCENE);
 	print_scene_info(scene);
-	init_mlx_and_window(&vars);
 	set_scene_for_transforms(scene);
-	main_draw(&vars, scene);
-	mlx_hooks(&vars);
-	mlx_put_image_to_window(vars.mlx, vars.win, vars.img->img, 0, 0);
-	mlx_loop(vars.mlx);
 	free(scene);
 	return (0);
 }

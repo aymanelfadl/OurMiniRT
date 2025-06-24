@@ -1,5 +1,5 @@
-#include "../includes/minirt_app.h"
-#include "../includes/parser.h"
+#include "../../includes/minirt_app.h"
+#include "../../includes/parser.h"
 #include <math.h>
 #include <string.h>
 #include <stdio.h>

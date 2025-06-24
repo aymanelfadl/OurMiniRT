@@ -1,4 +1,4 @@
-#include "../includes/minirt_app.h"
+#include "../../includes/minirt_app.h"
 #include <math.h>
 #include <stdio.h>
 

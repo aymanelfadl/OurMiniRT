@@ -3,6 +3,7 @@
 
 # include "scene_math.h"
 
+
 typedef struct s_parser
 {
 	char	*line;

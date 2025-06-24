@@ -1,4 +1,4 @@
-#include "../includes/minirt_app.h"
+#include "../../includes/minirt_app.h"
 #include <stdio.h>
 
 t_material	create_simple_material(t_color3 color)
