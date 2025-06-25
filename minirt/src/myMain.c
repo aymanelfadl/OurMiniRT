@@ -40,7 +40,7 @@ double hit_sphere(t_vec3 center, double raduis, t_ray ray)
 
 t_vec3 ray_color(t_ray ray) {
     double t = hit_sphere((t_vec3){0, 0, -1}, 0.5, ray);
-
+    
     if (t > 0.0) {
         t_vec3 hit_point = vec3_add(ray.origin, vec3_mult(ray.direction, t));
         t_vec3 normal = vec3_normalize(vec3_sub(hit_point, (t_vec3){0, 0, -1}));
@@ -76,7 +76,8 @@ int main(int argc, char **argv) {
     addr = mlx_get_data_addr(img, &bpp, &line_len, &endian);
     
     // Camera
-    double focal_length = 1.0;
+    double focal_length = 2.0;
+
     t_vec3 focal_vec = {0 , 0 , focal_length};    
     double viewport_height = 2.0;
     double viewport_width = viewport_height * ((double)WIDTH / (double)HEIGHT);
