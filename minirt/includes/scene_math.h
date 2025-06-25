@@ -4,7 +4,6 @@
 # include <math.h>
 # include <stdio.h>
 
-// --- Math/vector types ---
 typedef struct s_vec3
 {
 	double			x;
@@ -22,7 +21,6 @@ typedef struct s_quadratic
 typedef t_vec3		t_point3;
 typedef t_vec3		t_color3;
 
-// --- Scene/object types ---
 # define SPHERE 1
 # define PLANE 2
 # define CYLINDER 3
@@ -113,7 +111,6 @@ typedef struct s_scene
 	int				has_light;
 }					t_scene;
 
-// --- Matrix and transform types ---
 typedef struct s_matrix4
 {
 	double			m[4][4];

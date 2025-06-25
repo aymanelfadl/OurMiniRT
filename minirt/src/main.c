@@ -108,7 +108,6 @@ int	main(int argc, char **argv)
 	if (!scene)
 		error_exit(ERR_SCENE);
 	print_scene_info(scene);
-	set_scene_for_transforms(scene);
-	free(scene);
+ 	
 	return (0);
 }

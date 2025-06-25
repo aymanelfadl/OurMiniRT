@@ -25,7 +25,8 @@ UTILS = src/utils/math_utils.c \
         src/utils/vector_ops.c
 
 
-SRC = src/main.c $(PARSING) $(UTILS)
+# SRC = src/main.c $(PARSING) $(UTILS)
+SRC = src/myMain.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
