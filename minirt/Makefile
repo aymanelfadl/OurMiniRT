@@ -27,7 +27,7 @@ UTILS = src/utils/math_utils.c \
 
 # SRC = src/main.c $(PARSING) $(UTILS)
 
-SRC = src/myMain.c $(UTILS)
+SRC = src/main.c $(UTILS)
 
 
 OBJ = $(SRC:.c=.o)
