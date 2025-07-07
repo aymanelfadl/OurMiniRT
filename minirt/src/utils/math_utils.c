@@ -1,5 +1,4 @@
-#include "../../includes/scene_math.h"
-#include <math.h>
+#include "math_utils.h"
 
 /**
  * Helper function to solve quadratic equation ax^2 + bx + c = 0

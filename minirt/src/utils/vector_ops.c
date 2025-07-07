@@ -1,7 +1,5 @@
-#include "../../includes/scene_math.h"
-#include <math.h>
+#include "minirt.h"
 
-// Create a new vector
 t_vec3	vec3_create(double x, double y, double z)
 {
 	t_vec3	v;

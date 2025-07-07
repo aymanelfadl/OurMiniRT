@@ -1,0 +1,35 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/includes",
+                "${workspaceFolder}/includes/core",
+                "${workspaceFolder}/includes/parser",
+                "${workspaceFolder}/includes/raytracing",
+                "${workspaceFolder}/includes/utils",
+                "${workspaceFolder}/libft"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/cc",
+            "cStandard": "c99",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "${workspaceFolder}/includes",
+                    "${workspaceFolder}/includes/core",
+                    "${workspaceFolder}/includes/parser",
+                    "${workspaceFolder}/includes/raytracing",
+                    "${workspaceFolder}/includes/utils",
+                    "${workspaceFolder}/libft"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}

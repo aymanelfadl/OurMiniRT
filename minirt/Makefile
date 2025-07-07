@@ -1,6 +1,8 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fPIE -Iincludes/
+
 MLX_FLAGS = -lmlx -lXext -lX11 -lm -lbsd
+LDFLAGS = -pie
 
 NAME = minirt
 
@@ -20,14 +22,14 @@ PARSING = src/parser/add_to_scene.c \
           src/parser/validate_scene.c
 
 UTILS = src/utils/math_utils.c \
-        src/utils/matrix.c \
-        src/utils/transforms.c \
         src/utils/vector_ops.c
+
+CAMERA = src/camera/setup_camera.c
 
 
 # SRC = src/main.c $(PARSING) $(UTILS)
 
-SRC = src/myMain.c $(UTILS)
+SRC = src/main.c $(UTILS) $(CAMERA)
 
 
 OBJ = $(SRC:.c=.o)
@@ -35,7 +37,7 @@ OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ)  $(LIBFT) $(MLX_FLAGS) -o $(NAME)
+	$(CC) $(LDFLAGS) $(OBJ)  $(LIBFT) $(MLX_FLAGS) -o $(NAME)
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)

@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "*.css": "tailwindcss",
+        "random": "c",
+        "minirt_app.h": "c",
+        "scene_types.h": "c",
+        "parser.h": "c",
+        "minirt.h": "c",
+        "material.h": "c",
+        "hittable.h": "c",
+        "ray.h": "c"
+    },
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/includes",
+        "${workspaceFolder}/includes/core",
+        "${workspaceFolder}/includes/parser",
+        "${workspaceFolder}/includes/raytracing",
+        "${workspaceFolder}/includes/utils",
+        "${workspaceFolder}/libft"
+    ],
+    "C_Cpp.default.compilerPath": "/usr/bin/cc",
+    "C_Cpp.default.cStandard": "c99",
+    "C_Cpp.default.intelliSenseMode": "linux-gcc-x64"
+}

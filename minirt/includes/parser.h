@@ -1,8 +1,6 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "scene_math.h"
-
 
 typedef struct s_parser
 {
@@ -85,20 +83,6 @@ typedef struct s_parser
 # define FMT_CONE_EXPECTED "Expected format: cn x,y,z axis_x,y,z angle height r,g,b\n"
 # define FMT_CAMERA_EXPECTED "Expected format: C x,y,z nx,ny,nz fov\n"
 
-/* Function prototypes */
-/* File and scene loading */
-t_scene		*parse_scene_file(char *filename);
-int			validate_scene(t_scene *scene);
-int			validate_scene_rendering(t_scene *scene);
-
-/* Element parsing functions */
-int			parse_ambient(char **tokens, t_scene *scene);
-int			parse_light(char **tokens, t_scene *scene);
-int			parse_camera(char **tokens, t_scene *scene);
-int			parse_sphere(char **tokens, t_scene *scene);
-int			parse_plane(char **tokens, t_scene *scene);
-int			parse_cylinder(char **tokens, t_scene *scene);
-int			parse_cone(char **tokens, t_scene *scene);
 
 /* Data type parsing */
 int			parse_vector(char *str, t_vec3 *vec);
@@ -117,8 +101,5 @@ int			validate_cylinder_dimensions(double diameter, double height);
 int			validate_cone_dimensions(double angle, double height);
 int			validate_plane_normal(t_vec3 *normal);
 void		free_tokens(char **tokens);
-
-/* Scene management functions */
-int			add_object_to_scene(t_scene *scene, int type, void *object_data);
 
 #endif
