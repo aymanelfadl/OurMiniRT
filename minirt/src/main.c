@@ -2,10 +2,6 @@
 #include "camera.h"
 #include "math_utils.h"
 
-#define WIDTH 800
-#define HEIGHT 600
-#define M_PI 3.14159265358979323846
-
 // -------- Utilities --------
 int rgb_to_int(double r, double g, double b) {
     int ir = (int)(255.999 * r);
@@ -59,34 +55,72 @@ int main() {
     char *addr = mlx_get_data_addr(img, &bpp, &line_len, &endian);
 
     // === Scene ===
-    t_vec3 sphere_center = {0, 1, 0};
-    double sphere_radius = 1.0;
+    t_vec3 plane_point_1 = {0, 0, 0};
+    t_vec3 plane_normal_1 = {0, 1, 0};     // floor, up
 
-    t_vec3 plane_point = {0, 0, 0};
-    t_vec3 plane_normal = {0, 1, 0};
+    t_vec3 plane_point_2 = {0, 6, 0};
+    t_vec3 plane_normal_2 = {0, -1, 0};    // ceiling, down
+
+    t_vec3 plane_point_3 = {-3, 0, 0};
+    t_vec3 plane_normal_3 = {1, 0, 0};     // left wall, right
+
+    t_vec3 plane_point_4 = {3, 0, 0};
+    t_vec3 plane_normal_4 = {-1, 0, 0};    // right wall, left
+
+    t_vec3 plane_point_5 = {0, 0, 0};
+    t_vec3 plane_normal_5 = {0, 0, -1};    // back wall, toward camera
+
+    
 
     // === Camera ===
-    t_camera cam = init_camera((t_vec3){0, 1, -5}, (t_vec3){0, 1, 0}, 60.0, (double)WIDTH / HEIGHT);
+    t_camera cam = init_camera((t_vec3){0, 3, 8}, (t_vec3){0, 0, 1}, 180.0, (double)WIDTH / HEIGHT);
     compute_camera_basis(&cam);
     setup_viewport(&cam);
-
 
     // === Render Loop ===
     for (int j = 0; j < HEIGHT; j++) {
         for (int i = 0; i < WIDTH; i++) {
             t_ray ray = {cam.origin, get_ray_direction(&cam, i, j, WIDTH, HEIGHT)};
             t_vec3 color = background_color(ray);
+            double t_min = 1e9;
 
-            if (hit_sphere(sphere_center, sphere_radius, ray) > 0) {
-                color = (t_vec3){1.0, 0.0, 0.0}; // Red Sphere
-            } else if (hit_plane(plane_point, plane_normal, ray) > 0) {
-                color = (t_vec3){0.2, 0.8, 0.2}; // Green Plane
+            double t;
+
+            t = hit_plane(plane_point_1, plane_normal_1, ray);
+            if (t > 0 && t < t_min) {
+                t_min = t;
+                color = (t_vec3){150.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0};
+            }
+
+            t = hit_plane(plane_point_2, plane_normal_2, ray);
+            if (t > 0 && t < t_min) {
+                t_min = t;
+                color = (t_vec3){200.0 / 255.0, 200.0 / 255.0, 200.0 / 255.0};
+            }
+
+            t = hit_plane(plane_point_3, plane_normal_3, ray);
+            if (t > 0 && t < t_min) {
+                t_min = t;
+                color = (t_vec3){50.0 / 255.0, 150.0 / 255.0, 50.0 / 255.0};
+            }
+
+            t = hit_plane(plane_point_4, plane_normal_4, ray);
+            if (t > 0 && t < t_min) {
+                t_min = t;
+                color = (t_vec3){150.0 / 255.0, 150.0 / 255.0, 50.0 / 255.0};
+            }
+
+            t = hit_plane(plane_point_5, plane_normal_5, ray);
+            if (t > 0 && t < t_min) {
+                t_min = t;
+                color = (t_vec3){50.0 / 255.0, 150.0 / 255.0, 150.0 / 255.0};
             }
 
             int rgb = rgb_to_int(color.x, color.y, color.z);
             write_pixel(addr, line_len, bpp, j, i, rgb);
         }
     }
+
 
     mlx_put_image_to_window(mlx, win, img, 0, 0);
     mlx_loop(mlx);

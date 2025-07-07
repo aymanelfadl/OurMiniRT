@@ -22,7 +22,7 @@
 # define TRUE 1
 # define FALSE 0
 
-# define WIDTH 800
+# define WIDTH 1000
 # define HEIGHT 600
 # define WINDOW_NAME_RT "miniRT"
 

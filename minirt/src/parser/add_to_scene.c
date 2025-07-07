@@ -1,4 +1,4 @@
-#include "../../includes/minirt_app.h"
+#include "../../includes/minirt.h"
 
 int	add_object_to_scene(t_scene *scene, int type, void *object_data)
 {
