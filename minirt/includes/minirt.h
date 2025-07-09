@@ -37,7 +37,6 @@
 # define ERR_FILE_FORMAT "Error: File must have .rt extension\n"
 
 
-
 // Image handling
 typedef struct s_image {
     void *img;
@@ -60,6 +59,22 @@ typedef struct s_vec3
 typedef t_vec3 t_point3;
 typedef t_vec3 t_color3;
 
+// --- Ray type ---
+typedef struct s_ray
+{
+	t_vec3			origin;
+	t_vec3			direction;
+}					t_ray;
+
+
+/* Main program variables structure */
+typedef struct s_vars
+{
+	void				*mlx;
+	void				*win;
+	t_image				*img;
+}						t_vars;
+
 // --- Camera struct (now after t_vec3) ---
 typedef struct s_camera {
     t_vec3 origin;
@@ -74,40 +89,20 @@ typedef struct s_camera {
     double focal_length;
 } t_camera;
 
-/* Main program variables structure */
-typedef struct s_vars
+
+typedef struct s_scene
 {
-	void				*mlx;
-	void				*win;
-	t_image				*img;
-}						t_vars;
-
-
-typedef struct s_quadratic
-{
-	double			a;
-	double			b;
-	double			c;
-}					t_quadratic;
-
-
-typedef struct s_ambient
-{
-	double			ratio;
-	t_vec3		    color;
-}					t_ambient;
-
-typedef struct s_light
-{
-	t_point3		position;
-	double			brightness;
-	t_vec3		    color;
-}					t_light;
+    t_camera    camera; 
+    t_image     image;
+	t_vars		vars;
+	
+} t_scene;
 
 typedef struct s_material
 {
 	t_vec3		    color;
 }					t_material;
+
 
 typedef struct s_sphere
 {
@@ -144,12 +139,5 @@ typedef struct s_cone
 	t_vec3		    color;
 	t_material		material;
 }					t_cone;
-
-// --- Ray type ---
-typedef struct s_ray
-{
-	t_vec3			origin;
-	t_vec3			direction;
-}					t_ray;
 
 #endif

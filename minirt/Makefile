@@ -26,10 +26,12 @@ UTILS = src/utils/math_utils.c \
 
 CAMERA = src/camera/setup_camera.c
 
+RENDRING = src/rendering/setup_image.c
+
 
 # SRC = src/main.c $(PARSING) $(UTILS)
 
-SRC = src/main.c $(UTILS) $(CAMERA)
+SRC = src/main.c $(UTILS) $(CAMERA) $(RENDRING)
 
 
 OBJ = $(SRC:.c=.o)
