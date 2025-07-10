@@ -116,7 +116,7 @@ void render(t_scene *scene)
             }
             else if (intersect_ray_sphere(ray, s1, &t, &hit_point)) {
                 t_vec3 normal = vec3_normalize(vec3_sub(hit_point, s1.center));
-                color = compute_lighting(hit_point, normal, light, (t_vec3){0.0, 1.0, 0.0}); // green sphere
+                color = compute_lighting(hit_point, normal, light, (t_vec3){0.0, 1.0, 0.0});
             }
 
             int rgb = rgb_to_int(color.x, color.y, color.z);
