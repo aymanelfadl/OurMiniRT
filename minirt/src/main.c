@@ -64,6 +64,12 @@ int intersect_ray_sphere(t_ray ray , t_sphere sphere, double *out_t, t_vec3 *out
     return 1;
 }
 
+t_vec3 compute_lighting(t_vec3 point, t_vec3 normal, t_light light, t_vec3 object_color)
+{
+    t_vec3 light_dir = vec3_normalize(vec3_sub(light.position, point));
+    double brightness = fmax(0.0, vec3_dot(normal, light_dir));
+    return vec3_mult(object_color, brightness);
+}
 
 t_vec3 background_color(t_ray ray)
 {
@@ -77,6 +83,13 @@ t_vec3 background_color(t_ray ray)
 void render(t_scene *scene)
 {
     t_image *img = &scene->image;
+ 
+    t_light light =
+    {
+        .position = (t_vec3){5, 5, 0},
+        .intensity = (t_vec3){1.0, 1.0, 1.0}
+    };
+ 
     t_sphere s; 
     s.center = (t_point3) {0,0,5};
     s.radius = 1.0;
@@ -95,10 +108,16 @@ void render(t_scene *scene)
             t_vec3 hit_point;
             t_vec3 color;
             color = background_color(ray);
+
             if (intersect_ray_sphere(ray, s, &t, &hit_point))
-                color = (t_vec3){1.0, 0.0, 0.0};
-            else if (intersect_ray_sphere(ray, s1, &t, &hit_point))
-                color = (t_vec3){0.0, 1.0, 0.0};
+            {
+                t_vec3 normal = vec3_normalize(vec3_sub(hit_point, s.center));
+                color = compute_lighting(hit_point, normal, light, (t_vec3){1.0, 0.0, 0.0});
+            }
+            else if (intersect_ray_sphere(ray, s1, &t, &hit_point)) {
+                t_vec3 normal = vec3_normalize(vec3_sub(hit_point, s1.center));
+                color = compute_lighting(hit_point, normal, light, (t_vec3){0.0, 1.0, 0.0}); // green sphere
+            }
 
             int rgb = rgb_to_int(color.x, color.y, color.z);
             my_mlx_pixel_put(img, i, j, rgb);
@@ -153,6 +172,5 @@ int main()
 
     mlx_hook(scene.vars.win, 2, 1L << 0, handle_key, &scene);
     mlx_loop(scene.vars.mlx);
-
     return 0;
 }

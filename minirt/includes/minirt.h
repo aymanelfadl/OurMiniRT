@@ -140,4 +140,9 @@ typedef struct s_cone
 	t_material		material;
 }					t_cone;
 
+typedef struct s_light {
+    t_vec3 position;
+    t_vec3 intensity;
+} t_light;
+
 #endif
