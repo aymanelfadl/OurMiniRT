@@ -107,7 +107,7 @@ typedef struct s_material
 typedef struct s_sphere
 {
 	t_point3		center;
-	double			diameter;
+	double			radius;
 	t_vec3		    color;
 	t_material		material;
 }					t_sphere;

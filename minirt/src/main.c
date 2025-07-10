@@ -3,25 +3,24 @@
 #include "math_utils.h"
 #include "mlx_init.h"
 
-#define ROOM_MAX_X 3
-#define ROOM_MAX_Y 6
-#define ROOM_MAX_Z 10
-
-int rgb_to_int(double r, double g, double b) {
+int rgb_to_int(double r, double g, double b)
+{
     int ir = (int)(255.999 * r);
     int ig = (int)(255.999 * g);
     int ib = (int)(255.999 * b);
     return (ir << 16) | (ig << 8) | ib;
 }
 
-void my_mlx_pixel_put(t_image *img, int x, int y, int color) {
+void my_mlx_pixel_put(t_image *img, int x, int y, int color)
+{
     if (x < 0 || x >= img->width || y < 0 || y >= img->height)
         return;
     char *pixel = img->addr + (y * img->line_len + x * (img->bpp / 8));
     *(unsigned int *)pixel = color;
 }
 
-double hit_plane(t_vec3 point, t_vec3 normal, t_ray ray) {
+double hit_plane(t_vec3 point, t_vec3 normal, t_ray ray)
+{
     double divisor = vec3_dot(normal, ray.direction);
     if (fabs(divisor) < 1e-6)
         return -1;
@@ -29,7 +28,45 @@ double hit_plane(t_vec3 point, t_vec3 normal, t_ray ray) {
     return (t >= 0) ? t : -1;
 }
 
-t_vec3 background_color(t_ray ray) {
+int intersect_ray_sphere(t_ray ray , t_sphere sphere, double *out_t, t_vec3 *out_hit_point)
+{
+    // Vector from sphere center to ray origin
+    t_vec3 center_to_origin = vec3_sub(ray.origin, sphere.center);
+
+    // Project that vector onto the ray direction (b)
+    double projection = vec3_dot(center_to_origin, ray.direction);
+
+    // Distance squared from center to ray, minus radius squared (c)
+    double center_to_ray_squared = vec3_dot(center_to_origin, center_to_origin) - sphere.radius * sphere.radius;
+
+    // If the ray starts outside and is pointing away, it can't hit the sphere
+    if (center_to_ray_squared > 0.0 && projection > 0.0)
+        return 0;
+
+    // Compute discriminant of the quadratic equation
+    double discriminant = projection * projection - center_to_ray_squared;
+
+    // If negative, no real intersection
+    if (discriminant < 0.0)
+        return 0;
+
+    // Compute closest intersection point
+    double t_hit = -projection - sqrt(discriminant);
+
+    // If t is negative, the ray started inside the sphere
+    if (t_hit < 0.0)
+        t_hit = 0.0;
+
+    // Compute actual intersection point
+    *out_t = t_hit;
+    *out_hit_point = vec3_add(ray.origin, vec3_mult(ray.direction, t_hit));
+
+    return 1;
+}
+
+
+t_vec3 background_color(t_ray ray)
+{
     t_vec3 dir = vec3_normalize(ray.direction);
     double t = 0.5 * (dir.y + 1.0);
     t_vec3 white = {1.0, 1.0, 1.0};
@@ -37,121 +74,38 @@ t_vec3 background_color(t_ray ray) {
     return vec3_add(vec3_mult(white, 1.0 - t), vec3_mult(blue, t));
 }
 
-void render(t_scene *scene) {
-    
+void render(t_scene *scene)
+{
     t_image *img = &scene->image;
-    
+    t_sphere s; 
+    s.center = (t_point3) {0,0,5};
+    s.radius = 1.0;
+
+    t_sphere s1; 
+    s1.center = (t_point3) {0,0,10};
+    s1.radius = 5.0;
+
     for (int j = 0; j < HEIGHT; j++) {
         for (int i = 0; i < WIDTH; i++) {
             t_ray ray = {
                 scene->camera.origin,
                 get_ray_direction(&scene->camera, i, j, HEIGHT, WIDTH)
             };
-            t_vec3 color = background_color(ray);
-            double t_min = 1e9, t;
-            int hit_wall = 0;
-
-            // Floor (y=0), bounded by x,z
-            t = hit_plane((t_vec3){0,0,0}, (t_vec3){0,1,0}, ray);
-            if (t > 0 && t < t_min) {
-                t_vec3 p = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                if (p.x >= -ROOM_MAX_X && p.x <= ROOM_MAX_X &&
-                    p.z >= -ROOM_MAX_Z && p.z <= ROOM_MAX_Z) {
-                    t_min = t;
-                    color = (t_vec3){0.6, 0.2, 0.2}; // reddish floor
-                    hit_wall = 1;
-                }
-            }
-
-            // Ceiling (y=ROOM_MAX_Y), bounded by x,z
-            t = hit_plane((t_vec3){0,ROOM_MAX_Y,0}, (t_vec3){0,-1,0}, ray);
-            if (t > 0 && t < t_min) {
-                t_vec3 p = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                if (p.x >= -ROOM_MAX_X && p.x <= ROOM_MAX_X &&
-                    p.z >= -ROOM_MAX_Z && p.z <= ROOM_MAX_Z) {
-                    t_min = t;
-                    color = (t_vec3){0.8, 0.8, 0.8}; // light gray ceiling
-                    hit_wall = 2;
-                }
-            }
-
-            // Left wall (x = -ROOM_MAX_X), bounded by y,z
-            t = hit_plane((t_vec3){-ROOM_MAX_X,0,0}, (t_vec3){1,0,0}, ray);
-            if (t > 0 && t < t_min) {
-                t_vec3 p = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                if (p.y >= 0 && p.y <= ROOM_MAX_Y &&
-                    p.z >= -ROOM_MAX_Z && p.z <= ROOM_MAX_Z) {
-                    t_min = t;
-                    color = (t_vec3){0.2, 0.6, 0.2}; // green left wall
-                    hit_wall = 3;
-                }
-            }
-
-            // Right wall (x = ROOM_MAX_X), bounded by y,z
-            t = hit_plane((t_vec3){ROOM_MAX_X,0,0}, (t_vec3){-1,0,0}, ray);
-            if (t > 0 && t < t_min) {
-                t_vec3 p = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                if (p.y >= 0 && p.y <= ROOM_MAX_Y &&
-                    p.z >= -ROOM_MAX_Z && p.z <= ROOM_MAX_Z) {
-                    t_min = t;
-                    color = (t_vec3){0.6, 0.6, 0.2}; // yellow right wall
-                    hit_wall = 4;
-                }
-            }
-
-            // Back wall (z = -ROOM_MAX_Z) - This should be in front of you!
-            t = hit_plane((t_vec3){0,0,-ROOM_MAX_Z}, (t_vec3){0,0,1}, ray);
-            if (t > 0 && t < t_min) {
-                t_vec3 p = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                if (p.x >= -ROOM_MAX_X && p.x <= ROOM_MAX_X &&
-                    p.y >= 0 && p.y <= ROOM_MAX_Y) {
-                    t_min = t;
-                    color = (t_vec3){0.2, 0.6, 0.6}; // cyan back wall
-                    hit_wall = 5;
-                }
-            }
-
-            // Front wall (z = ROOM_MAX_Z) - This should be behind you
-            t = hit_plane((t_vec3){0,0,ROOM_MAX_Z}, (t_vec3){0, 0, -1}, ray);
-            if (t > 0 && t < t_min) {
-                t_vec3 p = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                if (p.x >= -ROOM_MAX_X && p.x <= ROOM_MAX_X &&
-                    p.y >= 0 && p.y <= ROOM_MAX_Y) {
-                    t_min = t;
-                    color = (t_vec3){0.7, 0.4, 0.1}; // brown front wall
-                    hit_wall = 6;
-                }
-            }
+            double t;
+            t_vec3 hit_point;
+            t_vec3 color;
+            color = background_color(ray);
+            if (intersect_ray_sphere(ray, s, &t, &hit_point))
+                color = (t_vec3){1.0, 0.0, 0.0};
+            else if (intersect_ray_sphere(ray, s1, &t, &hit_point))
+                color = (t_vec3){0.0, 1.0, 0.0};
 
             int rgb = rgb_to_int(color.x, color.y, color.z);
             my_mlx_pixel_put(img, i, j, rgb);
         }
     }
+
     mlx_put_image_to_window(scene->vars.mlx, scene->vars.win, img->img, 0, 0);
-}
-
-void rotate_yaw(t_camera *cam, double angle_rad)
-{
-    double cos_a = cos(angle_rad);
-    double sin_a = sin(angle_rad);
-
-    t_vec3 f = cam->forward;
-
-    // Rotate forward vector around Y axis (world up)
-    double new_x = f.x * cos_a - f.z * sin_a;
-    double new_z = f.x * sin_a + f.z * cos_a;
-
-    cam->forward.x = new_x;
-    cam->forward.z = new_z;
-    cam->forward.y = f.y; // keep same height component
-
-    cam->forward = vec3_normalize(cam->forward);
-
-    // Update target point or direction as needed
-    cam->target = vec3_add(cam->origin, cam->forward);
-
-    // Recompute camera basis vectors after rotation
-    compute_camera_basis(cam);
 }
 
 
@@ -161,7 +115,6 @@ int handle_key(int keycode, t_scene *scene)
     printf("key pressed : %d\n", keycode);
 
     double step = 0.5;
-    double step_angle = 0.5;
     if (keycode == 65307) // ESC
         exit(0);
     if (keycode == 119) // W
@@ -172,15 +125,6 @@ int handle_key(int keycode, t_scene *scene)
         scene->camera.origin = vec3_sub(scene->camera.origin, vec3_mult(scene->camera.right, step));
     if (keycode == 100) // D
         scene->camera.origin = vec3_add(scene->camera.origin, vec3_mult(scene->camera.right, step));
-    if (keycode == 65362) // UP arrow
-        scene->camera.origin.y += step;
-    if (keycode == 65364) // DOWN arrow
-        scene->camera.origin.y -= step;
-    if (keycode == 65361) // LEFT arrow
-        rotate_yaw(&scene->camera, step_angle);
-    if (keycode == 65363) // RIGHT arrow
-        rotate_yaw(&scene->camera, -step_angle);
-
     
     compute_camera_basis(&scene->camera);
     setup_viewport(&scene->camera);
@@ -194,7 +138,7 @@ t_scene scene_init(void) {
     scene.vars.mlx = mlx_init();
     scene.vars.win = mlx_new_window(scene.vars.mlx, WIDTH, HEIGHT, "MiniRT Room");
     scene.image = init_image(scene.vars.mlx, WIDTH, HEIGHT);
-    scene.camera = init_camera((t_vec3){0, 3, 0}, (t_vec3){0, 3, 10}, 90.0, (double)WIDTH / HEIGHT);
+    scene.camera = init_camera((t_vec3){0, 0, 0}, (t_vec3){0, 0, 1}, 90.0, (double)WIDTH / HEIGHT);
 
     return scene;
 }
