@@ -25,6 +25,15 @@ t_vec3	vec3_mult(t_vec3 v, double t)
 	return (vec3_create(v.x * t, v.y * t, v.z * t));
 }
 
+t_vec3 vec3_mul_vec(t_vec3 a, t_vec3 b)
+{
+    return (t_vec3){
+        a.x * b.x,
+        a.y * b.y,
+        a.z * b.z
+    };
+}
+
 t_vec3	vec3_div(t_vec3 v, double t)
 {
 	return (vec3_create(v.x / t, v.y / t, v.z / t));

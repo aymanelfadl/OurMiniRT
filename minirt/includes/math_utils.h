@@ -9,6 +9,7 @@ t_vec3				vec3_create(double x, double y, double z);
 t_vec3				vec3_add(t_vec3 v1, t_vec3 v2);
 t_vec3				vec3_sub(t_vec3 v1, t_vec3 v2);
 t_vec3				vec3_mult(t_vec3 v, double t);
+t_vec3				vec3_mul_vec(t_vec3 a, t_vec3 b);
 t_vec3				vec3_div(t_vec3 v, double t);
 t_vec3				vec3_cross(t_vec3 v1, t_vec3 v2);
 t_vec3				vec3_normalize(t_vec3 v);
