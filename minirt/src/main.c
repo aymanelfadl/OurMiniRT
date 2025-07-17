@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "math_utils.h"
 #include "mlx_init.h"
+#include "parser.h"
 
 int rgb_to_int(double r, double g, double b)
 {
@@ -160,26 +161,12 @@ int handle_key(int keycode, t_scene *scene)
     return 0;
 }
 
-t_scene scene_init(void)
+
+int main(int argc, char *argv[])
 {
-    t_scene scene;
-
-    scene.vars.mlx = mlx_init();
-    scene.vars.win = mlx_new_window(scene.vars.mlx, WIDTH, HEIGHT, "MiniRT Room");
-    scene.image = init_image(scene.vars.mlx, WIDTH, HEIGHT);
-    scene.camera = init_camera(
-        (t_vec3){0, 0, 0},
-        (t_vec3){0, 0, 1},
-        90.0,
-        (double)WIDTH / HEIGHT
-    );
-
-    return scene;
-}
-
-int main(void)
-{
-    t_scene scene = scene_init();
+    (void) argc;
+    t_scene *scene = scene_init(argv[1]);
+    printf("camera coords: x= %.2f, y= %.2f, z= %.2f \n target")
 
     compute_camera_basis(&scene.camera);
     setup_viewport(&scene.camera);

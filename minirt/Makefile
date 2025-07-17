@@ -11,15 +11,7 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 
-PARSING = src/parser/add_to_scene.c \
-          src/parser/parse_colors.c \
-          src/parser/parse_double.c \
-          src/parser/parse_elements.c \
-          src/parser/parse_file.c \
-          src/parser/parse_vectors.c \
-          src/parser/parser_utils.c \
-          src/parser/validate_elements.c \
-          src/parser/validate_scene.c
+PARSING = src/parser/scene_init.c src/parser/utils.c
 
 UTILS = src/utils/math_utils.c \
         src/utils/vector_ops.c
@@ -31,7 +23,7 @@ RENDRING = src/rendering/setup_image.c
 
 # SRC = src/main.c $(PARSING) $(UTILS)
 
-SRC = src/main.c $(UTILS) $(CAMERA) $(RENDRING)
+SRC = src/main.c $(UTILS) $(CAMERA) $(RENDRING) $(PARSING)
 
 
 OBJ = $(SRC:.c=.o)

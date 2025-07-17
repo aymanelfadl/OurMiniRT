@@ -1,35 +1,21 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/includes",
-                "${workspaceFolder}/includes/core",
-                "${workspaceFolder}/includes/parser",
-                "${workspaceFolder}/includes/raytracing",
-                "${workspaceFolder}/includes/utils",
-                "${workspaceFolder}/libft"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/cc",
-            "cStandard": "c99",
-            "cppStandard": "gnu++14",
-            "intelliSenseMode": "linux-gcc-x64",
-            "browse": {
-                "path": [
-                    "${workspaceFolder}",
-                    "${workspaceFolder}/includes",
-                    "${workspaceFolder}/includes/core",
-                    "${workspaceFolder}/includes/parser",
-                    "${workspaceFolder}/includes/raytracing",
-                    "${workspaceFolder}/includes/utils",
-                    "${workspaceFolder}/libft"
-                ],
-                "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
-            }
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/**",                    // all local project folders
+        "/usr/include",                             // system includes
+        "/usr/local/include",                       // local includes
+        "/usr/include/X11",                         // often needed for MiniLibX
+        "/home/aelfadl/goinfre/*",   // your MiniLibX folder
+        "/home/aelfadl/goinfre/OurMiniRT/minirt/includes"  // your project headers
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ],
+  "version": 4
 }

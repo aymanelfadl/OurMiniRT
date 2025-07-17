@@ -68,12 +68,12 @@ typedef struct s_ray
 
 
 /* Main program variables structure */
-typedef struct s_vars
+typedef struct s_mlx_vars
 {
 	void				*mlx;
 	void				*win;
 	t_image				*img;
-}						t_vars;
+}						t_mlx_vars;
 
 // --- Camera struct (now after t_vec3) ---
 typedef struct s_camera {
@@ -94,7 +94,7 @@ typedef struct s_scene
 {
     t_camera    camera; 
     t_image     image;
-	t_vars		vars;
+	t_mlx_vars	vars;
 	
 } t_scene;
 
@@ -140,7 +140,9 @@ typedef struct s_cone
 	t_material		material;
 }					t_cone;
 
-typedef struct s_light {
+typedef struct s_light
+{
+	double ambient;
     t_vec3 position;
     t_vec3 intensity;
 } t_light;

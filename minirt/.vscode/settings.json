@@ -8,7 +8,10 @@
         "minirt.h": "c",
         "material.h": "c",
         "hittable.h": "c",
-        "ray.h": "c"
+        "ray.h": "c",
+        "libft.h": "c",
+        "camera.h": "c",
+        "math.h": "c"
     },
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/includes",
