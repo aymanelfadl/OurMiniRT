@@ -166,13 +166,11 @@ int main(int argc, char *argv[])
 {
     (void) argc;
     t_scene *scene = scene_init(argv[1]);
-    printf("camera coords: x= %.2f, y= %.2f, z= %.2f \n target")
+    compute_camera_basis(&scene->camera);
+    setup_viewport(&scene->camera);
+    render(scene);
 
-    compute_camera_basis(&scene.camera);
-    setup_viewport(&scene.camera);
-    render(&scene);
-
-    mlx_hook(scene.vars.win, 2, 1L << 0, handle_key, &scene);
-    mlx_loop(scene.vars.mlx);
+    mlx_hook(scene->vars.win, 2, 1L << 0, handle_key, &scene);
+    mlx_loop(scene->vars.mlx);
     return 0;
 }

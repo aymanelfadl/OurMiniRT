@@ -25,7 +25,7 @@ t_vec3 get_coordinates(char *str)
     t_vec3 v;
 
     coords = ft_split(str, ",");
-    if (!coords || total_len_array(coords) != 3)
+    if (!coords || array_len_elements(coords) != 3)
     {
         ft_free_split(coords);
         return (t_vec3){INFINITY, INFINITY, INFINITY};
@@ -44,13 +44,14 @@ t_camera *parse_camera(char *cam_args)
         return NULL;
 
     char **content = ft_split(cam_args, " \t");
-    if (!content || total_len_array(content) != 3)
+    printf("content len: %d\n", array_len_elements(content));
+    if (!content || array_len_elements(content) != 3)
     {
         ft_free_split(content);
         free(cam);
         return NULL;
     }
-
+    
     cam->origin = get_coordinates(content[0]);
     cam->target = get_coordinates(content[1]);
     cam->fov_deg = ft_atoi(content[2]);
@@ -62,13 +63,26 @@ t_camera *parse_camera(char *cam_args)
 
 void fill_scene(t_scene *scene, t_token *token)
 {
-    (void) scene;
     if (!ft_strcmp(token->id, "C"))
     {
+        printf("token args: %s\n", token->args);
         t_camera *cam = parse_camera(token->args);
-        scene->camera = cam;
+        if (cam) 
+        {
+            scene->camera = *cam;
+            printf("cam: (%.2f, %.2f, %.2f) and fov : %.2f\n", scene->camera.origin.x,
+                    scene->camera.origin.y,
+                    scene->camera.origin.z,
+                    scene->camera.fov_deg);
+            free(cam); // free temp malloc
+        }
+        else
+        {
+            printf("Err\n");
+        }
     }
 }
+
 
 
 t_scene *build_scene(int fd)
@@ -117,14 +131,14 @@ t_scene *scene_init(char *file)
 
     scene = valide_scene(file);
     
-    // // if (!scene)
-    // //     return (NULL);
-    // scene->vars.mlx  = mlx_init();
-    // scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
-    // scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
-    // scene->camera    = init_camera((t_vec3){0, 0, 0},
-    //                                (t_vec3){0, 0, 1},
-    //                                90.0,
-    //                                (double)WIDTH / HEIGHT);
-    return (*scene);
+    // if (!scene)
+    //     return (NULL);
+    scene->vars.mlx  = mlx_init();
+    scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
+    scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
+    scene->camera    = init_camera((t_vec3){0, 0, 0},
+                                   (t_vec3){0, 0, 1},
+                                   90.0,
+                                   (double)WIDTH / HEIGHT);
+    return (scene);
 }

@@ -1,9 +1,19 @@
 #include "parser.h"
 
-size_t total_len_array(char const **s)
+int array_len_elements(char **s)
 {
-    size_t len = 0;
-    size_t i;
+    int i = 0;
+    if (!s)
+        return 0;
+    while (s[i])
+        i++;
+    return i;
+}
+
+int array_len(char **s)
+{
+    int len = 0;
+    int i;
 
     if (!s)
         return (0);
@@ -27,7 +37,7 @@ char *ft_strjoin_array(char const **arr, char const *sep)
 
     if (!arr || !sep)
         return (NULL);
-    out = malloc(total_len_array(arr) + 1);
+    out = malloc(array_len((char **)arr) + 1);
     pos = 0;
     sep_len = ft_strlen(sep);
     i = 0;

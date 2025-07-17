@@ -9,7 +9,7 @@
 typedef enum e_type {
     A,
     L,
-    C,s
+    C,
     SP,
     PL,
     CY,
@@ -23,13 +23,13 @@ typedef struct s_token {
 t_scene *scene_init(char *file);
 
 // Utils 
-
-size_t total_len_array(char const **s);
+int array_len(char **s);
 char *ft_strjoin_array(char const **arr, char const *sep);
 int	ft_strcmp(const char *s1, const char *s2);
 void free_token(void *ptr);
 void ft_free_split(char **tab);
 double ft_atof(const char *str);
+int array_len_elements(char **s);
 
 
 #endif
