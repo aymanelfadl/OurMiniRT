@@ -65,15 +65,10 @@ void fill_scene(t_scene *scene, t_token *token)
 {
     if (!ft_strcmp(token->id, "C"))
     {
-        printf("token args: %s\n", token->args);
         t_camera *cam = parse_camera(token->args);
         if (cam) 
         {
             scene->camera = *cam;
-            printf("cam: (%.2f, %.2f, %.2f) and fov : %.2f\n", scene->camera.origin.x,
-                    scene->camera.origin.y,
-                    scene->camera.origin.z,
-                    scene->camera.fov_deg);
             free(cam); // free temp malloc
         }
         else
