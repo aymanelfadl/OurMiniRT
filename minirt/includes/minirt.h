@@ -149,6 +149,14 @@ typedef struct s_object {
     t_cylinder cylinder;
 } t_object;
 
+typedef struct s_hit
+{
+    float   t;          
+    t_vec3  p;          
+    t_vec3  n;          
+    t_vec3  color;
+} t_hit;
+
 typedef struct s_scene
 {
     t_camera    camera; 

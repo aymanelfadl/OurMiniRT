@@ -20,39 +20,13 @@ void my_mlx_pixel_put(t_image *img, int x, int y, int color)
     *(unsigned int *)pixel = color;
 }
 
-int hit_plane(t_vec3 point_on_plane, t_vec3 normal, t_ray ray, double *out_t)
+
+int handle_key(int keycode, t_scene *scene)
 {
-    double denom = vec3_dot(normal, ray.direction);
-    if (fabs(denom) < 1e-6)
-        return 0;
-
-    double t = vec3_dot(vec3_sub(point_on_plane, ray.origin), normal) / denom;
-    if (t < 0)
-        return 0;
-
-    *out_t = t;
-    return 1;
-}
-
-int intersect_ray_sphere(t_ray ray , t_sphere sphere, double *out_t, t_vec3 *out_hit_point)
-{
-    t_vec3 oc = vec3_sub(ray.origin, sphere.center);
-    double b = vec3_dot(oc, ray.direction);
-    double c = vec3_dot(oc, oc) - sphere.radius * sphere.radius;
-    double discriminant = b * b - c;
-
-    if (discriminant < 0.0)
-        return 0;
-
-    double t_hit = -b - sqrt(discriminant);
-    if (t_hit < 0.0)
-        t_hit = -b + sqrt(discriminant);
-    if (t_hit < 0.0)
-        return 0;
-
-    *out_t = t_hit;
-    *out_hit_point = vec3_add(ray.origin, vec3_mult(ray.direction, t_hit));
-    return 1;
+    (void)scene;
+    if (keycode == 65307) /* ESC key */
+        exit(0);
+    return 0;
 }
 
 t_vec3 compute_lighting(t_point3 hit_point, t_vec3 normal, t_vec3 object_color, t_light light)
@@ -69,96 +43,116 @@ t_vec3 compute_lighting(t_point3 hit_point, t_vec3 normal, t_vec3 object_color, 
     return vec3_add(ambient, diffuse);
 }
 
-t_vec3 background_color(t_ray ray)
+int ray_sphere(t_ray *r, t_sphere *s, t_hit *h)
 {
-    t_vec3 dir = vec3_normalize(ray.direction);
-    double t = 0.5 * (dir.y + 1.0);
-    t_vec3 white = {1.0, 1.0, 1.0};
-    t_vec3 blue = {0.5, 0.7, 1.0};
-    return vec3_add(vec3_mult(white, 1.0 - t), vec3_mult(blue, t));
+    t_vec3 oc = vec3_sub(r->origin, s->center);
+    
+    float a = vec3_dot(r->direction, r->direction);
+    float b = 2.f * vec3_dot(oc, r->direction);
+    float c = vec3_dot(oc, oc) - s->radius * s->radius;
+
+    float disc = b * b - 4.f * a * c;
+    if (disc < 0.f)
+        return 0;
+    float t = (-b - sqrtf(disc)) / (2.f * a);
+    
+    if (t < 0.f)
+        t = (-b + sqrtf(disc)) / (2.f * a);
+    
+    if (t < 0.f)
+        return 0;
+
+    h->t = t;
+    h->p = vec3_add(r->origin, vec3_mult(r->direction, t));
+    h->n = vec3_normalize(vec3_sub(h->p, s->center));
+    h->color = s->color;
+
+    return 1;
+}
+
+int ray_plane(const t_ray *r, const t_plane *pl, t_hit *h)
+{
+    float denom = vec3_dot(pl->normal, r->direction);
+
+    if (fabsf(denom) < 1e-6f)
+        return 0;
+    t_vec3 diff = vec3_sub(pl->point, r->origin);
+
+    float t = vec3_dot(diff, pl->normal) / denom;
+    if (t < 0.f)
+        return 0;
+    
+    h->t = t;
+    h->p = vec3_add(r->origin, vec3_mult(r->direction, t));
+    h->n = (denom > 0) ? vec3_mult(pl->normal, -1.f) : pl->normal;
+    h->color = pl->color;
+    
+    return 1;
+}
+
+t_vec3 trace_ray(t_scene *s, t_ray *r)
+{
+    t_hit   best = {.t = INFINITY};
+    t_list *lst = s->meshes;
+    while (lst)
+    {
+        t_object *obj = (t_object *)lst->content;
+        t_hit tmp;
+        int hit = 0;
+        switch (obj->type)
+        {
+            case SPHERE:
+            {
+                hit = ray_sphere(r, &obj->sphere, &tmp);
+                break;
+            }
+            case PLANE:
+            {
+                hit = ray_plane(r, &obj->plane,  &tmp);
+                break;
+            }
+            case CYLINDER: break;
+        }
+        if (hit && tmp.t < best.t)
+            best = tmp;
+        lst = lst->next;
+    }
+    if (best.t == INFINITY)
+        return (t_vec3){50,50,80};
+
+    t_vec3 L = vec3_normalize(vec3_sub(s->light.position, best.p));
+    float  Ld = fmaxf(0.f, vec3_dot(best.n, L)) * s->light.brightness;
+    t_vec3 col = vec3_mult(best.color, Ld);
+
+    return col;
 }
 
 void render(t_scene *scene)
 {
     t_image *img = &scene->image;
 
-    for (int j = 0; j < HEIGHT; j++) {
-        for (int i = 0; i < WIDTH; i++) {
-            t_ray ray = {
-                .origin    = scene->camera.origin,
-                .direction = get_ray_direction(&scene->camera, i, j, HEIGHT, WIDTH)
-            };
+    for (int j = 0; j < HEIGHT; j++)
+    {
+        for (int i = 0; i < WIDTH; i++)
+        {
+            /* 1. Build a ray whose origin is the camera origin. */
+            t_vec3 dir = get_ray_direction(&scene->camera, i, j, WIDTH, HEIGHT);
+            t_ray  ray = (t_ray){scene->camera.origin, dir};
 
-            t_vec3 color = background_color(ray);
-            double closest_t = INFINITY;
-            t_vec3 closest_hit, closest_normal, closest_color;
+            /* 2. Trace the ray. */
+            t_vec3 c = trace_ray(scene, &ray);
 
-            t_list *node = scene->meshes;
-            while (node)
-            {
-                t_object *obj = (t_object *)node->content;
-                double t;
-                t_vec3 hit, normal;
+            /* 3. Clamp colour and pack into 0x00RRGGBB. */
+            int r = (int)fminf(255, fmaxf(0, c.x));
+            int g = (int)fminf(255, fmaxf(0, c.y));
+            int b = (int)fminf(255, fmaxf(0, c.z));
+            int rgb = (r << 16) | (g << 8) | b;
 
-                if (obj->type == SPHERE)
-                {
-                    if (intersect_ray_sphere(ray, obj->sphere, &t, &hit))
-                    {
-                        normal = vec3_normalize(vec3_sub(hit, obj->sphere.center));
-                        if (t < closest_t) {
-                            closest_t = t;
-                            closest_hit = hit;
-                            closest_normal = normal;
-                            closest_color = obj->sphere.color;
-                        }
-                    }
-                }
-                else if (obj->type == PLANE)
-                {
-                    if (hit_plane(obj->plane.point, obj->plane.normal, ray, &t))
-                    {
-                        hit = vec3_add(ray.origin, vec3_mult(ray.direction, t));
-                        if (t < closest_t) {
-                            closest_t = t;
-                            closest_hit = hit;
-                            closest_normal = vec3_normalize(obj->plane.normal);
-                            closest_color = obj->plane.color;
-                        }
-                    }
-                }
-                node = node->next;
-            }
-
-            if (closest_t < INFINITY)
-                color = compute_lighting(closest_hit, closest_normal, closest_color, scene->light);
-
-            int rgb = rgb_to_int(color.x, color.y, color.z);
-            my_mlx_pixel_put(img, i, j, rgb);
+            /* 4. Write pixel into image buffer. */
+            my_mlx_pixel_put(&scene->image, i, j, rgb);
         }
     }
-
     mlx_put_image_to_window(scene->vars.mlx, scene->vars.win, img->img, 0, 0);
-}
-int handle_key(int keycode, t_scene *scene)
-{
-    printf("key pressed : %d\n", keycode);
-
-    double step = 0.5;
-    if (keycode == 65307) // ESC
-        exit(0);
-    if (keycode == 119) // W
-        scene->camera.origin = vec3_add(scene->camera.origin, vec3_mult(scene->camera.forward, step));
-    if (keycode == 115) // S
-        scene->camera.origin = vec3_sub(scene->camera.origin, vec3_mult(scene->camera.forward, step));
-    if (keycode == 97)  // A
-        scene->camera.origin = vec3_sub(scene->camera.origin, vec3_mult(scene->camera.right, step));
-    if (keycode == 100) // D
-        scene->camera.origin = vec3_add(scene->camera.origin, vec3_mult(scene->camera.right, step));
-
-    compute_camera_basis(&scene->camera);
-    setup_viewport(&scene->camera);
-    render(scene);
-    return 0;
 }
 
 static void print_vec3(const char *label, t_vec3 v)
@@ -244,8 +238,8 @@ int main(int argc, char *argv[])
     compute_camera_basis(&scene->camera);
     setup_viewport(&scene->camera);
     render(scene);
-
-    mlx_hook(scene->vars.win, 2, 1L << 0, handle_key, &scene);
+    
+    mlx_hook(scene->vars.win, 2, 1L << 0, handle_key, scene);
     mlx_loop(scene->vars.mlx);
     free(scene);
     return 0;
