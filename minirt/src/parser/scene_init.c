@@ -60,6 +60,49 @@ t_camera *parse_camera(char *cam_args)
     return cam;
 }
 
+t_ambient *parse_ambient(char *amb_args)
+{
+    t_ambient *ambient = malloc(sizeof(t_ambient));
+    if (!ambient)
+        return NULL;
+
+    char **content = ft_split(amb_args, " \t");
+    if (!content || array_len_elements(content) != 2)
+    {
+        ft_free_split(content);
+        free(ambient);
+        return NULL;
+    }
+    
+    ambient->ratio = ft_atof(content[0]);
+    ambient->color = get_coordinates(content[1]);
+
+    ft_free_split(content);
+    return ambient;
+}
+
+t_light *parse_light(char *light_args)
+{
+    t_light *light = malloc(sizeof(t_light));
+    if (!light)
+        return NULL;
+    
+    char **content = ft_split(light_args, " \t");
+    if (!content || array_len_elements(content) != 3)
+    {
+        ft_free_split(content);
+        free(light);
+        return NULL;
+    }
+
+    light->position = get_coordinates(content[0]);
+    light->brightness = ft_atof(content[1]);
+    light->color = get_coordinates(content[2]);
+
+    ft_free_split(content);
+    return light;
+}
+
 
 void fill_scene(t_scene *scene, t_token *token)
 {
@@ -69,15 +112,41 @@ void fill_scene(t_scene *scene, t_token *token)
         if (cam) 
         {
             scene->camera = *cam;
-            free(cam); // free temp malloc
+            free(cam);
         }
         else
         {
             printf("Err\n");
         }
     }
+    else if (!ft_strcmp(token->id, "A"))
+    {
+        t_ambient *ambient = parse_ambient(token->args);
+        if (ambient) 
+        {
+            scene->ambient = *ambient;
+            free(ambient);
+        }
+        else
+        {
+            printf("Err\n");
+        }
+    }
+    else if (!ft_strcmp(token->id, "L"))
+    {
+        t_light *light = parse_light(token->args);
+        if (light) 
+        {
+            scene->light = *light;
+            free(light);
+        }
+        else
+        {
+            printf("Err\n");
+        }
+    }
+    
 }
-
 
 
 t_scene *build_scene(int fd)
@@ -125,15 +194,14 @@ t_scene *scene_init(char *file)
     t_scene *scene;
 
     scene = valide_scene(file);
-    
     // if (!scene)
     //     return (NULL);
-    scene->vars.mlx  = mlx_init();
-    scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
-    scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
-    scene->camera    = init_camera((t_vec3){0, 0, 0},
-                                   (t_vec3){0, 0, 1},
-                                   90.0,
-                                   (double)WIDTH / HEIGHT);
+    // scene->vars.mlx  = mlx_init();
+    // scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
+    // scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
+    // scene->camera    = init_camera((t_vec3){0, 0, 0},
+    //                                (t_vec3){0, 0, 1},
+    //                                90.0,
+    //                                (double)WIDTH / HEIGHT);
     return (scene);
 }

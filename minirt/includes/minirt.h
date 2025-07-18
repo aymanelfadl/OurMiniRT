@@ -89,15 +89,6 @@ typedef struct s_camera {
     double focal_length;
 } t_camera;
 
-
-typedef struct s_scene
-{
-    t_camera    camera; 
-    t_image     image;
-	t_mlx_vars	vars;
-	
-} t_scene;
-
 typedef struct s_material
 {
 	t_vec3		    color;
@@ -140,11 +131,26 @@ typedef struct s_cone
 	t_material		material;
 }					t_cone;
 
+typedef struct s_ambient
+{
+    double ratio;   
+    t_vec3 color;
+} t_ambient;
+
 typedef struct s_light
 {
-	double ambient;
     t_vec3 position;
-    t_vec3 intensity;
+    double brightness;
+    t_vec3 color;
 } t_light;
+
+typedef struct s_scene
+{
+    t_camera    camera; 
+    t_image     image;
+	t_mlx_vars	vars;
+	t_light		light;
+	t_ambient 	ambient;
+} t_scene;
 
 #endif
