@@ -148,12 +148,34 @@ void fill_scene(t_scene *scene, t_token *token)
     
 }
 
+static int id_to_idx(const char *id)
+{
+    if (ft_strcmp(id, "A") == 0)
+        return 0;
+    if (ft_strcmp(id, "C") == 0)
+        return 1;
+    if (ft_strcmp(id, "L") == 0)
+        return 2;
+    return -1;
+}
+
+static int mark_uniq(int *set, const char *id)
+{
+    int idx = id_to_idx(id);
+    if (idx == -1)
+        return 0;
+    if (set[idx])
+        return 1;
+    set[idx] = 1;
+    return 0;
+}
 
 t_scene *build_scene(int fd)
 {
     char    *line;
     t_list  *node;
     t_scene *scene;
+    int     uniq[3] = {0};
 
     scene = ft_calloc(1, sizeof(t_scene));
     if (!scene)
@@ -164,10 +186,24 @@ t_scene *build_scene(int fd)
         node = creat_token(line);
         if (node)
         {
-            fill_scene(scene, (t_token *)node->content);
+            t_token *tok = (t_token *)node->content;
+            if (mark_uniq(uniq, tok->id))
+            {
+                ft_lstdelone(node, free_token);
+                free(line);
+                free(scene);
+                return (NULL);
+            }
+            fill_scene(scene, tok);
             ft_lstdelone(node, free_token);
         }
+        free(line);
         line = get_next_line(fd);
+    }
+    if (uniq[0] + uniq[1] + uniq[2] != 3)
+    {
+        free(scene);
+        return (NULL);
     }
     return (scene);
 }
