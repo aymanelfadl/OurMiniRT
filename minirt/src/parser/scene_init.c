@@ -44,7 +44,6 @@ t_camera *parse_camera(char *cam_args)
         return NULL;
 
     char **content = ft_split(cam_args, " \t");
-    printf("content len: %d\n", array_len_elements(content));
     if (!content || array_len_elements(content) != 3)
     {
         ft_free_split(content);
@@ -103,6 +102,74 @@ t_light *parse_light(char *light_args)
     return light;
 }
 
+t_sphere *parse_sphere(char *sphere_args)
+{
+    t_sphere *sphere = malloc(sizeof(t_sphere));
+    if (!sphere)
+        return NULL;
+    
+    char **content = ft_split(sphere_args, " \t");
+    if (!content || array_len_elements(content) != 3)
+    {
+        ft_free_split(content);
+        free(sphere);
+        return NULL;
+    }
+
+    sphere->center = get_coordinates(content[0]);
+    sphere->radius = ft_atof(content[1]) * 0.5;
+    sphere->color = get_coordinates(content[2]);
+
+    ft_free_split(content);
+    
+    return sphere;
+}
+
+t_plane *parse_plane(char *plane_args)
+{
+    t_plane *pl = malloc(sizeof(t_plane));
+    if (!pl)
+        return NULL;
+
+    char **content = ft_split(plane_args, " \t");
+    if (!content || array_len_elements(content) != 3)
+    {
+        ft_free_split(content);
+        free(pl);
+        return NULL;
+    }
+
+    pl->point  = get_coordinates(content[0]);
+    pl->normal = get_coordinates(content[1]);
+    pl->color  = get_coordinates(content[2]);
+
+    ft_free_split(content);
+    return pl;
+}
+
+t_cylinder *parse_cylinder(char *cy_args)
+{
+    t_cylinder *cy = malloc(sizeof(t_cylinder));
+    if (!cy)
+        return NULL;
+
+    char **content = ft_split(cy_args, " \t");
+    if (!content || array_len_elements(content) != 5)
+    {
+        ft_free_split(content);
+        free(cy);
+        return NULL;
+    }
+
+    cy->center   = get_coordinates(content[0]);
+    cy->axis     = get_coordinates(content[1]);
+    cy->diameter = ft_atof(content[2]);
+    cy->height   = ft_atof(content[3]);
+    cy->color    = get_coordinates(content[4]);
+
+    ft_free_split(content);
+    return cy;
+}
 
 void fill_scene(t_scene *scene, t_token *token)
 {
@@ -145,7 +212,50 @@ void fill_scene(t_scene *scene, t_token *token)
             printf("Err\n");
         }
     }
-    
+    else if (!ft_strcmp(token->id, "sp"))
+    {
+        t_sphere *sp = parse_sphere(token->args);
+        if (sp)
+        {
+            t_object *obj = malloc(sizeof(t_object));
+            obj->type  = SPHERE;
+            obj->sphere = *sp;
+            ft_lstadd_back(&scene->meshes, ft_lstnew(obj));
+            free(sp);
+        }
+        else
+        {
+            printf("Err\n");
+        }
+    }
+    else if (!ft_strcmp(token->id, "pl"))
+    {
+        t_plane *pl = parse_plane(token->args);
+        if (pl)
+        {
+            t_object *obj = malloc(sizeof(t_object));
+            obj->type = PLANE;
+            obj->plane = *pl;
+            ft_lstadd_back(&scene->meshes, ft_lstnew(obj));
+            free(pl);
+        }
+        else
+            printf("Err\n");
+    }
+    else if (!ft_strcmp(token->id, "cy"))
+    {
+        t_cylinder *cy = parse_cylinder(token->args);
+        if (cy)
+        {
+            t_object *obj = malloc(sizeof(t_object));
+            obj->type = CYLINDER;
+            obj->cylinder = *cy;
+            ft_lstadd_back(&scene->meshes, ft_lstnew(obj));
+            free(cy);
+        }
+        else
+            printf("Err\n");
+    }
 }
 
 static int id_to_idx(const char *id)

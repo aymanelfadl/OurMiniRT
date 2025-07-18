@@ -12,15 +12,6 @@
 # include <stdio.h>
 
 
-# define SPHERE 1
-# define PLANE 2
-# define CYLINDER 3
-# define CONE 4
-# define MAX_OBJECTS 100
-
-
-# define TRUE 1
-# define FALSE 0
 
 # define WIDTH 500
 # define HEIGHT 500
@@ -36,6 +27,12 @@
 # define ERR_MEMORY "Error: Memory allocation failed\n"
 # define ERR_FILE_FORMAT "Error: File must have .rt extension\n"
 
+
+typedef enum e_type {
+    SPHERE,
+    PLANE,
+    CYLINDER,
+} t_type;
 
 // Image handling
 typedef struct s_image {
@@ -121,6 +118,7 @@ typedef struct s_cylinder
 	t_material		material;
 }					t_cylinder;
 
+
 typedef struct s_cone
 {
 	t_point3		vertex;
@@ -144,6 +142,13 @@ typedef struct s_light
     t_vec3 color;
 } t_light;
 
+typedef struct s_object {
+    t_type   type;
+    t_sphere sphere;
+    t_plane  plane;
+    t_cylinder cylinder;
+} t_object;
+
 typedef struct s_scene
 {
     t_camera    camera; 
@@ -151,6 +156,7 @@ typedef struct s_scene
 	t_mlx_vars	vars;
 	t_light		light;
 	t_ambient 	ambient;
+	t_list      *meshes;
 } t_scene;
 
 #endif

@@ -193,13 +193,53 @@ void print_scene(const t_scene *s)
     printf("=============================\n");
 }
 
+void print_meshes(const t_list *meshes)
+{
+    const t_list *node = meshes;
+    int           i    = 0;
+
+    printf("\n----------  MESHES  ----------\n");
+    while (node)
+    {
+        t_object *obj = (t_object *)node->content;
+        switch (obj->type)
+        {
+            case SPHERE:
+                printf("[%d] SPHERE\n", i++);
+                print_vec3("  center", obj->sphere.center);
+                printf("  radius : %.3f\n", obj->sphere.radius);
+                print_vec3("  color ", obj->sphere.color);
+                break;
+            case PLANE:
+                printf("[%d] PLANE\n", i++);
+                print_vec3("  point ", obj->plane.point);
+                print_vec3("  normal", obj->plane.normal);
+                print_vec3("  color ", obj->plane.color);
+                break;
+            case CYLINDER:
+                printf("[%d] CYLINDER\n", i++);
+                print_vec3("  center", obj->cylinder.center);
+                print_vec3("  axis  ", obj->cylinder.axis);
+                printf("  diam  : %.3f\n", obj->cylinder.diameter);
+                printf("  height: %.3f\n", obj->cylinder.height);
+                print_vec3("  color ", obj->cylinder.color);
+                break;
+            default:
+                printf("[%d] UNKNOWN TYPE\n", i++);
+                break;
+        }
+        node = node->next;
+    }
+    printf("------------------------------\n");
+}
+
 int main(int argc, char *argv[])
 {
     (void) argc;
     t_scene *scene = scene_init(argv[1]);
 
     print_scene(scene);
-    
+    print_meshes(scene->meshes);
     // compute_camera_basis(&scene->camera);
     // setup_viewport(&scene->camera);
     // render(scene);

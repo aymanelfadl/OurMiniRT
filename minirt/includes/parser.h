@@ -6,14 +6,6 @@
 #include "camera.h"
 # include "../libft/libft.h"
 
-typedef enum e_type {
-    A,
-    L,
-    C,
-    SP,
-    PL,
-    CY,
-} t_type;
 
 typedef struct s_token {
     char *id;       /* "A", "C", "sp", "pl", "cy" */
