@@ -1,17 +1,6 @@
 #include "minirt.h"
 #include "camera.h"
 
-t_camera init_camera(t_vec3 origin, t_vec3 target, double fov_deg, double aspect_ratio)
-{
-    t_camera cam;
-    cam.origin = origin;
-    cam.target = target;
-    cam.fov_deg = fov_deg;
-    cam.aspect_ratio = aspect_ratio;
-    cam.focal_length = 1.0;
-    return cam;
-}
-
 void compute_camera_basis(t_camera *cam)
 {
     t_vec3 world_up;

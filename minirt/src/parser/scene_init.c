@@ -54,6 +54,8 @@ t_camera *parse_camera(char *cam_args)
     cam->origin = get_coordinates(content[0]);
     cam->target = get_coordinates(content[1]);
     cam->fov_deg = ft_atoi(content[2]);
+    cam->aspect_ratio = WIDTH / HEIGHT;
+    cam->focal_length = 1.0;
 
     ft_free_split(content);
     return cam;
@@ -340,14 +342,10 @@ t_scene *scene_init(char *file)
     t_scene *scene;
 
     scene = valide_scene(file);
-    // if (!scene)
-    //     return (NULL);
-    // scene->vars.mlx  = mlx_init();
-    // scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
-    // scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
-    // scene->camera    = init_camera((t_vec3){0, 0, 0},
-    //                                (t_vec3){0, 0, 1},
-    //                                90.0,
-    //                                (double)WIDTH / HEIGHT);
+    if (!scene)
+        return (NULL);
+    scene->vars.mlx  = mlx_init();
+    scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
+    scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
     return (scene);
 }
