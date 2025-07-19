@@ -1,4 +1,4 @@
-#include "math_utils.h"
+#include "minirt.h"
 
 /**
  * Helper function to solve quadratic equation ax^2 + bx + c = 0

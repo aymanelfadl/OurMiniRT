@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "minirt.h"
 
 t_list *creat_token(char *line)
 {

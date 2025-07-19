@@ -18,12 +18,18 @@ UTILS = src/utils/math_utils.c \
 
 CAMERA = src/camera/setup_camera.c
 
-RENDRING = src/rendering/setup_image.c
+EVENTS = src/events/rotation.c \
+        src/events/translation.c
 
+RENDERING = src/rendering/ray_color.c \
+           src/rendering/ray_plane.c \
+           src/rendering/ray_sphere.c \
+           src/rendering/ray_trace.c \
+           src/rendering/setup_image.c
 
 # SRC = src/main.c $(PARSING) $(UTILS)
 
-SRC = src/main.c $(UTILS) $(CAMERA) $(RENDRING) $(PARSING)
+SRC = src/main.c $(UTILS) $(CAMERA) $(RENDERING) $(PARSING) $(EVENTS)
 
 
 OBJ = $(SRC:.c=.o)

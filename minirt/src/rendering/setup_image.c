@@ -1,5 +1,13 @@
 #include "minirt.h"
-#include "camera.h"
+
+
+void my_mlx_pixel_put(t_image *img, int x, int y, int color)
+{
+    if (x < 0 || x >= img->width || y < 0 || y >= img->height)
+        return;
+    char *pixel = img->addr + (y * img->line_len + x * (img->bpp / 8));
+    *(unsigned int *)pixel = color;
+}
 
 t_image init_image(void *mlx, int width, int height)
 {

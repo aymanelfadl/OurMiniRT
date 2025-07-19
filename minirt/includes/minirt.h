@@ -11,13 +11,10 @@
 # include <unistd.h>
 # include <stdio.h>
 
-
-
+/* Constants */
 # define WIDTH 500
 # define HEIGHT 500
 # define WINDOW_NAME_RT "miniRT"
-
-
 
 /* Error codes */
 # define ERR_ARGS "Error: Invalid number of arguments\n"
@@ -27,6 +24,10 @@
 # define ERR_MEMORY "Error: Memory allocation failed\n"
 # define ERR_FILE_FORMAT "Error: File must have .rt extension\n"
 
+# include "math_utils.h"
+
+typedef t_vec3 t_point3;
+typedef t_vec3 t_color3;
 
 typedef enum e_type {
     SPHERE,
@@ -34,7 +35,7 @@ typedef enum e_type {
     CYLINDER,
 } t_type;
 
-// Image handling
+/* Image handling structure */
 typedef struct s_image {
     void *img;
     char *addr;
@@ -45,34 +46,18 @@ typedef struct s_image {
     int height;
 } t_image;
 
-// --- Vector types (move up) ---
-typedef struct s_vec3
-{
-    double x;
-    double y;
-    double z;
-} t_vec3;
+/* Ray type */
+typedef struct s_ray {
+    t_vec3 origin;
+    t_vec3 direction;
+} t_ray;
 
-typedef t_vec3 t_point3;
-typedef t_vec3 t_color3;
+/* Material structure */
+typedef struct s_material {
+    t_vec3 color;
+} t_material;
 
-// --- Ray type ---
-typedef struct s_ray
-{
-	t_vec3			origin;
-	t_vec3			direction;
-}					t_ray;
-
-
-/* Main program variables structure */
-typedef struct s_mlx_vars
-{
-	void				*mlx;
-	void				*win;
-	t_image				*img;
-}						t_mlx_vars;
-
-// --- Camera struct (now after t_vec3) ---
+/* Camera structure */
 typedef struct s_camera {
     t_vec3 origin;
     t_vec3 target;
@@ -86,85 +71,102 @@ typedef struct s_camera {
     double focal_length;
 } t_camera;
 
-typedef struct s_material
-{
-	t_vec3		    color;
-}					t_material;
+/* MLX variables structure */
+typedef struct s_mlx_vars {
+    void *mlx;
+    void *win;
+    t_image *img;
+} t_mlx_vars;
 
+/* Object structures */
+typedef struct s_sphere {
+    t_point3 center;
+    double radius;
+    t_vec3 color;
+    t_material material;
+} t_sphere;
 
-typedef struct s_sphere
-{
-	t_point3		center;
-	double			radius;
-	t_vec3		    color;
-	t_material		material;
-}					t_sphere;
+typedef struct s_plane {
+    t_point3 point;
+    t_vec3 normal;
+    t_vec3 color;
+    t_material material;
+} t_plane;
 
-typedef struct s_plane
-{
-	t_point3		point;
-	t_vec3			normal;
-	t_vec3		    color;
-	t_material		material;
-}					t_plane;
+typedef struct s_cylinder {
+    t_point3 center;
+    t_vec3 axis;
+    double diameter;
+    double height;
+    t_vec3 color;
+    t_material material;
+} t_cylinder;
 
-typedef struct s_cylinder
-{
-	t_point3		center;
-	t_vec3			axis;
-	double			diameter;
-	double			height;
-	t_vec3		    color;
-	t_material		material;
-}					t_cylinder;
+typedef struct s_cone {
+    t_point3 vertex;
+    t_vec3 axis;
+    double angle;
+    double height;
+    t_vec3 color;
+    t_material material;
+} t_cone;
 
-
-typedef struct s_cone
-{
-	t_point3		vertex;
-	t_vec3			axis;
-	double			angle;
-	double			height;
-	t_vec3		    color;
-	t_material		material;
-}					t_cone;
-
-typedef struct s_ambient
-{
+/* Lighting structures */
+typedef struct s_ambient {
     double ratio;   
     t_vec3 color;
 } t_ambient;
 
-typedef struct s_light
-{
+typedef struct s_light {
     t_vec3 position;
     double brightness;
     t_vec3 color;
 } t_light;
 
+/* Generic object structure */
 typedef struct s_object {
-    t_type   type;
+    t_type type;
     t_sphere sphere;
-    t_plane  plane;
+    t_plane plane;
     t_cylinder cylinder;
 } t_object;
 
-typedef struct s_hit
-{
-    float   t;          
-    t_vec3  p;          
-    t_vec3  n;          
-    t_vec3  color;
+/* Ray hit information structure */
+typedef struct s_hit {
+    float t;          
+    t_vec3 p;          
+    t_vec3 n;          
+    t_vec3 color;
 } t_hit;
 
-typedef struct s_scene
-{
-    t_camera    camera; 
-    t_image     image;
-	t_mlx_vars	vars;
-	t_light		light;
-	t_ambient 	ambient;
-	t_list      *meshes;
+/* Main scene structure */
+typedef struct s_scene {
+    t_camera camera; 
+    t_image image;
+    t_mlx_vars vars;
+    t_light light;
+    t_ambient ambient;
+    t_list *meshes;
 } t_scene;
+
+/* Function declarations */
+t_image init_image(void *mlx, int width, int height);
+t_scene *scene_init(char *file);
+t_vec3 compute_lighting(t_point3 hit_point, t_vec3 normal, t_vec3 object_color, t_scene *scene);
+
+void compute_camera_basis(t_camera *cam);
+void setup_viewport(t_camera *cam);
+t_vec3 get_ray_direction(t_camera *cam, int i, int j, int width, int height);
+
+void my_mlx_pixel_put(t_image *img, int x, int y, int color);
+int ray_plane(const t_ray *r, const t_plane *pl, t_hit *h);
+int ray_sphere(t_ray *r, t_sphere *s, t_hit *h);
+t_vec3 trace_ray(t_scene *scene, t_ray *ray);
+void render(t_scene *scene);
+int rgb_to_int(double r, double g, double b);
+
+/* Include implementation headers */
+# include "mlx_hooks.h"
+# include "parser.h"
 
 #endif

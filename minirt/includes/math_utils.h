@@ -1,10 +1,17 @@
 #ifndef SCENE_MATH_H
 # define SCENE_MATH_H
 
-# include "minirt.h"
-
 # define M_PI		3.14159265358979323846
 
+
+typedef struct s_vec3
+{
+    double x;
+    double y;
+    double z;
+
+} t_vec3;
+ 
 t_vec3				vec3_create(double x, double y, double z);
 t_vec3				vec3_add(t_vec3 v1, t_vec3 v2);
 t_vec3				vec3_sub(t_vec3 v1, t_vec3 v2);

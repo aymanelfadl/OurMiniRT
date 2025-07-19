@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "minirt.h"
 
 int array_len_elements(char **s)
 {

@@ -12,7 +12,10 @@
         "libft.h": "c",
         "camera.h": "c",
         "math.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "math_utils.h": "c",
+        "mlx_init.h": "c",
+        "mlx_hooks.h": "c"
     },
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/includes",

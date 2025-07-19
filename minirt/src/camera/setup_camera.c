@@ -1,5 +1,4 @@
 #include "minirt.h"
-#include "camera.h"
 
 void compute_camera_basis(t_camera *cam)
 {
