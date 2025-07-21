@@ -97,6 +97,8 @@ int main(int argc, char *argv[])
     render(scene);
     
     mlx_hook(scene->vars.win, 2, 1L << 0, handle_key, scene);
+    mlx_mouse_hook(scene->vars.win, mouse_move_hook, scene);
+
     mlx_loop(scene->vars.mlx);
     free(scene);
     return 0;
