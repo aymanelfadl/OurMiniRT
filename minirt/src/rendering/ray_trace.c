@@ -3,7 +3,7 @@
 
 t_vec3 trace_ray(t_scene *scene, t_ray *ray)
 {
-    t_hit closest_hit = {.t = INFINITY};
+    t_hit a9rab_hit = {.t = INFINITY};
     t_list *node = scene->meshes;
 
     while (node)
@@ -18,16 +18,16 @@ t_vec3 trace_ray(t_scene *scene, t_ray *ray)
             is_hit = ray_plane(ray, &object->plane, &current_hit);
         else if (object->type == CYLINDER)
             is_hit = ray_cylinder(ray, &object->cylinder, &current_hit);
-        if (is_hit && current_hit.t < closest_hit.t)
-            closest_hit = current_hit;
+        if (is_hit && current_hit.t < a9rab_hit.t)
+            a9rab_hit = current_hit;
 
         node = node->next;
     }
 
-    if (closest_hit.t == INFINITY)
+    if (a9rab_hit.t == INFINITY)
         return (t_vec3){50, 50, 80};
 
-    return compute_lighting(closest_hit.p, closest_hit.n, closest_hit.color, scene);
+    return compute_lighting(a9rab_hit, scene);
 }
 
 

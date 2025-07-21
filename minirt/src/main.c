@@ -82,8 +82,12 @@ void print_meshes(const t_list *meshes)
 
 int main(int argc, char *argv[])
 {
-    (void) argc;
+    if (argc != 2)
+        return (printf("Err \n"), 1);
+    
     t_scene *scene = scene_init(argv[1]);
+    if (!scene)
+        return (printf("Err \n"), 1);
 
     print_scene(scene);
     print_meshes(scene->meshes);

@@ -152,7 +152,7 @@ typedef struct s_scene {
 /* Function declarations */
 t_image init_image(void *mlx, int width, int height);
 t_scene *scene_init(char *file);
-t_vec3 compute_lighting(t_point3 hit_point, t_vec3 normal, t_vec3 object_color, t_scene *scene);
+t_vec3 compute_lighting(t_hit h, t_scene *scene);
 
 void compute_camera_basis(t_camera *cam);
 void setup_viewport(t_camera *cam);
