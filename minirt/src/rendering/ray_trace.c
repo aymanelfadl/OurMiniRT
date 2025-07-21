@@ -16,6 +16,8 @@ t_vec3 trace_ray(t_scene *scene, t_ray *ray)
             is_hit = ray_sphere(ray, &object->sphere, &current_hit);
         else if (object->type == PLANE)
             is_hit = ray_plane(ray, &object->plane, &current_hit);
+        else if (object->type == CYLINDER)
+            is_hit = ray_cylinder(ray, &object->cylinder, &current_hit);
         if (is_hit && current_hit.t < closest_hit.t)
             closest_hit = current_hit;
 

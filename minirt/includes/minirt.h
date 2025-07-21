@@ -159,8 +159,9 @@ void setup_viewport(t_camera *cam);
 t_vec3 get_ray_direction(t_camera *cam, int i, int j, int width, int height);
 
 void my_mlx_pixel_put(t_image *img, int x, int y, int color);
-int ray_plane(const t_ray *r, const t_plane *pl, t_hit *h);
+int ray_plane(t_ray *r, t_plane *pl, t_hit *h);
 int ray_sphere(t_ray *r, t_sphere *s, t_hit *h);
+int ray_cylinder(t_ray *r, t_cylinder *cy, t_hit *h);
 t_vec3 trace_ray(t_scene *scene, t_ray *ray);
 void render(t_scene *scene);
 int rgb_to_int(double r, double g, double b);

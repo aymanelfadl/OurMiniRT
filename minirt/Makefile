@@ -13,8 +13,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 PARSING = src/parser/scene_init.c src/parser/utils.c
 
-UTILS = src/utils/math_utils.c \
-        src/utils/vector_ops.c
+UTILS = src/utils/vector_ops.c
 
 CAMERA = src/camera/setup_camera.c
 
@@ -24,6 +23,7 @@ EVENTS = src/events/rotation.c \
 RENDERING = src/rendering/ray_color.c \
            src/rendering/ray_plane.c \
            src/rendering/ray_sphere.c \
+           src/rendering/ray_cylinder.c \
            src/rendering/ray_trace.c \
            src/rendering/setup_image.c
 
