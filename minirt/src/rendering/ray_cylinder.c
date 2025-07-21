@@ -28,8 +28,7 @@ static int	check_cap_hit(const t_cylinder *cyl, t_ray ray, t_hit *hit,
 	if (t <= 0.001 || (hit->t >= 0 && t >= hit->t))
 		return (0);
 	radial = vec3_sub(vec3_add(ray.origin, vec3_mult(ray.direction, t)), cap_center);
-	radial = vec3_sub(radial, vec3_mult(cyl->axis, vec3_dot(radial,
-					cyl->axis)));
+	radial = vec3_sub(radial, vec3_mult(cyl->axis, vec3_dot(radial, cyl->axis)));
 	if (vec3_length(radial) > cyl->diameter / 2.0)
 		return (0);
 	hit->t = t;

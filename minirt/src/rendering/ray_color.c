@@ -2,9 +2,10 @@
 
 int rgb_to_int(double r, double g, double b)
 {
-    int ir = (int)(255.999 * fmin(r, 1.0));
-    int ig = (int)(255.999 * fmin(g, 1.0));
-    int ib = (int)(255.999 * fmin(b, 1.0));
+    /* 3. Clamp colour and pack into 0x00RRGGBB. */
+    int ir = (int)fminf(255, fmaxf(0, r));
+    int ig = (int)fminf(255, fmaxf(0, g));
+    int ib = (int)fminf(255, fmaxf(0, b));
     return (ir << 16) | (ig << 8) | ib;
 }
 

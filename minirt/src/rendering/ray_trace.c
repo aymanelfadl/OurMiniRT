@@ -46,14 +46,8 @@ void render(t_scene *scene)
             /* 2. Trace the ray. */
             t_vec3 c = trace_ray(scene, &ray);
 
-            /* 3. Clamp colour and pack into 0x00RRGGBB. */
-            int r = (int)fminf(255, fmaxf(0, c.x));
-            int g = (int)fminf(255, fmaxf(0, c.y));
-            int b = (int)fminf(255, fmaxf(0, c.z));
-            int rgb = (r << 16) | (g << 8) | b;
-
             /* 4. Write pixel into image buffer. */
-            my_mlx_pixel_put(&scene->image, i, j, rgb);
+            my_mlx_pixel_put(&scene->image, i, j, rgb_to_int(c.x, c.y, c.z));
         }
     }
     mlx_put_image_to_window(scene->vars.mlx, scene->vars.win, img->img, 0, 0);
