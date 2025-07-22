@@ -347,5 +347,6 @@ t_scene *scene_init(char *file)
     scene->vars.mlx  = mlx_init();
     scene->vars.win  = mlx_new_window(scene->vars.mlx, WIDTH, HEIGHT, "MiniRT");
     scene->image     = init_image(scene->vars.mlx, WIDTH, HEIGHT);
+    scene->selected_mesh = NULL;
     return (scene);
 }
