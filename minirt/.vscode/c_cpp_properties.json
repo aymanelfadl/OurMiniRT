@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/**",                    // all local project folders
+        "/usr/include",                             // system includes
+        "/usr/local/include",                       // local includes
+        "/usr/include/X11",                         // often needed for MiniLibX
+        "/home/aelfadl/goinfre/*",   // your MiniLibX folder
+        "/home/aelfadl/goinfre/OurMiniRT/minirt/includes"  // your project headers
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++17",
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ],
+  "version": 4
+}
