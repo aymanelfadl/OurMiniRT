@@ -24,7 +24,7 @@ t_vec3 compute_lighting(t_hit h, t_scene *scene)
     shadow_ray.origin = vec3_add(h.p, vec3_mult(h.n, 1e-6));
     shadow_ray.direction = to_light;
 
-    t_hit hit_p = get_a9rabe_hit(scene->meshes, &shadow_ray);
+    t_hit hit_p = hit_scene(scene->meshes, &shadow_ray);
     if (hit_p.t > 1e-6 && hit_p.t < light_distance)
         return ambient;
      

@@ -1,13 +1,5 @@
 #include "minirt.h"
 
-int handle_key(int keycode, t_scene *scene)
-{
-    (void)scene;
-    if (keycode == 65307) /* ESC key */
-        exit(0);
-    return 0;
-}
-
 static void print_vec3(const char *label, t_vec3 v)
 {
     printf("%-12s : [% .3f, % .3f, % .3f]\n", label, v.x, v.y, v.z);
@@ -96,7 +88,7 @@ int main(int argc, char *argv[])
     setup_viewport(&scene->camera);
     render(scene);
     
-    mlx_hook(scene->vars.win, 2, 1L << 0, handle_key, scene);
+    mlx_hook(scene->vars.win, 2, 1L << 0, key_hook, scene);
     mlx_mouse_hook(scene->vars.win, mouse_move_hook, scene);
 
     mlx_loop(scene->vars.mlx);

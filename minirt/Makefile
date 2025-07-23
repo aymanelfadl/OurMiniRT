@@ -18,7 +18,8 @@ UTILS = src/utils/vector_ops.c
 CAMERA = src/camera/setup_camera.c
 
 EVENTS = src/events/rotation.c \
-        src/events/translation.c
+        src/events/translation.c \
+        src/events/mouse_event.c
 
 RENDERING = src/rendering/ray_color.c \
            src/rendering/ray_plane.c \
