@@ -15,10 +15,12 @@ PARSING = src/parser/scene_init.c src/parser/utils.c
 
 UTILS = src/utils/vector_ops.c
 
-CAMERA = src/camera/setup_camera.c
+CAMERA = src/camera/setup_camera.c \
+         src/camera/camera_events.c \
 
-EVENTS = src/events/rotation.c \
-        src/events/translation.c \
+
+EVENTS = src/events/keys_events.c \
+        src/events/objects_events.c \
         src/events/mouse_event.c
 
 RENDERING = src/rendering/ray_color.c \

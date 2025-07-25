@@ -24,14 +24,23 @@
 #define KEY_UP      65362  // ↑
 #define KEY_DOWN    65364  // ↓
 
+#define KEY_F       102
+#define KEY_R       114
 
 int mouse_move_hook(int keycode ,int x, int y, void *param);
 void trace_mouse_ray(t_scene *scene, t_ray *ray);
 
 
 int key_hook(int keycode, void *scene);
-t_vec3 rotate_y(t_vec3 v, float angle_deg);
-t_vec3 rotate_x(t_vec3 v, float angle_deg);
+
+// objects hooks :
+void rotate_objects(t_scene *s, int keycode);
+void move_object(t_scene *s, int keycode);
+void scale_object(t_scene *s, int keycode);
+
+// camera hooks : 
+void rotate_camera(t_scene *s, int keycode);
+void move_camera(t_scene *s, int keycode);
 
 
 
