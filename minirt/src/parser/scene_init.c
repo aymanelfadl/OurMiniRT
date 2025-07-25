@@ -56,6 +56,8 @@ t_camera *parse_camera(char *cam_args)
     cam->fov_deg = ft_atoi(content[2]);
     cam->aspect_ratio = WIDTH / HEIGHT;
     cam->focal_length = 1.0;
+    cam->yaw = 0.0f;
+    cam->pitch = 0.0f;
 
     ft_free_split(content);
     return cam;

@@ -1,101 +1,128 @@
 #include "minirt.h"
 
-/* Move any object by a direction vector */
-static void move_object(t_object *obj, t_vec3 v)
+
+
+/* Move selected object */
+static void move_object(t_scene *s, int keycode)
 {
-    if (obj->type == SPHERE)
-        obj->sphere.center = vec3_add(obj->sphere.center, v);
-    else if (obj->type == PLANE)
-        obj->plane.point = vec3_add(obj->plane.point, v);
-    else if (obj->type == CYLINDER)
-        obj->cylinder.center = vec3_add(obj->cylinder.center, v);
+    t_vec3 obj_dir = {0};
+
+    if (keycode == KEY_W)         obj_dir.z =  SPEED;
+    else if (keycode == KEY_S)    obj_dir.z = -SPEED;
+    else if (keycode == KEY_A)    obj_dir.x = -SPEED;
+    else if (keycode == KEY_D)    obj_dir.x =  SPEED;
+    else if (keycode == KEY_PLUS) obj_dir.y =  SPEED;
+    else if (keycode == KEY_MINUS) obj_dir.y = -SPEED;
+
+    t_vec3 move = vec3_add(vec3_add(vec3_mult(s->camera.right,   obj_dir.x),
+                                    vec3_mult(s->camera.up,      obj_dir.y)),
+                                    vec3_mult(s->camera.forward, obj_dir.z));
+
+    if (s->selected_mesh->type == SPHERE)
+        s->selected_mesh->sphere.center = vec3_add(s->selected_mesh->sphere.center, move);
+    else if (s->selected_mesh->type == PLANE)
+        s->selected_mesh->plane.point = vec3_add(s->selected_mesh->plane.point, move);
+    else if (s->selected_mesh->type == CYLINDER)
+        s->selected_mesh->cylinder.center = vec3_add(s->selected_mesh->cylinder.center, move);
 }
 
-/* Move the camera position */
-static void move_camera(t_camera *cam, t_vec3 v)
+static void move_camera(t_scene *s, int keycode)
 {
-    cam->origin = vec3_add(cam->origin, v);
+    t_vec3 cam_dir = {0};
+
+    if (keycode == KEY_I)
+        cam_dir.z =  SPEED;
+    else if (keycode == KEY_K)
+        cam_dir.z = -SPEED;
+    else if (keycode == KEY_J)
+        cam_dir.x = -SPEED;
+    else if (keycode == KEY_L)
+        cam_dir.x =  SPEED;
+    else if (keycode == KEY_U)
+        cam_dir.y =  SPEED;
+    else if (keycode == KEY_O)
+        cam_dir.y = -SPEED;
+
+    t_vec3 move = vec3_add(vec3_add(vec3_mult(s->camera.right,   cam_dir.x),
+                                    vec3_mult(s->camera.up,      cam_dir.y)),
+                                    vec3_mult(s->camera.forward, cam_dir.z));
+    s->camera.origin = vec3_add(s->camera.origin, move);
 }
 
-/* Rotate a vector around the Y axis */
-t_vec3 rotate_y(t_vec3 v, float angle_deg)
-{
-    float rad = angle_deg * M_PI / 180.0f;
-    float c = cosf(rad);
-    float s = sinf(rad);
-
-    t_vec3 result;
-    result.x = v.x * c + v.z * s;
-    result.y = v.y;
-    result.z = -v.x * s + v.z * c;
-    return result;
-}
-
-/* Rotate selected object around its Y axis */
-static void rotate_object(t_object *obj, float angle_deg)
+void rotate_object(t_object *obj, float angle_deg, int rotate_axis)
 {
     if (obj->type == CYLINDER)
-        obj->cylinder.axis = vec3_normalize(rotate_y(obj->cylinder.axis, angle_deg));
+    {
+        if (rotate_axis == 1)
+            obj->cylinder.axis = vec3_normalize(rotate_y(obj->cylinder.axis, angle_deg));
+        else if (rotate_axis == 2)
+            obj->cylinder.axis = vec3_normalize(rotate_x(obj->cylinder.axis, angle_deg));
+    }
     else if (obj->type == PLANE)
-        obj->plane.normal = vec3_normalize(rotate_y(obj->plane.normal, angle_deg));
+    {
+        if (rotate_axis == 1)
+            obj->plane.normal = vec3_normalize(rotate_y(obj->plane.normal, angle_deg));
+        else if (rotate_axis == 2)
+            obj->plane.normal = vec3_normalize(rotate_x(obj->plane.normal, angle_deg));
+    }
 }
 
-/* Handle key input */
+static void rotate_objects(t_scene *s, int keycode)
+{
+    if (keycode == KEY_Q)
+        rotate_object(s->selected_mesh, -5.0f, 1);
+    else if (keycode == KEY_E)
+        rotate_object(s->selected_mesh, 5.0f, 1);
+    else if (keycode == 120)
+        rotate_object(s->selected_mesh, -5.0f, 2);
+    else if (keycode == 99)
+        rotate_object(s->selected_mesh, 5.0f, 2);
+}
+void update_camera_target(t_camera *cam, float pitch, float yaw)
+{
+    float rad_pitch = pitch * M_PI / 180.0f;
+    float rad_yaw   = yaw * M_PI / 180.0f;
+
+    t_vec3 direction = {
+        cosf(rad_pitch) * sinf(rad_yaw),
+        sinf(rad_pitch),
+        -cosf(rad_pitch) * cosf(rad_yaw)
+    };
+    cam->target = vec3_add(cam->origin, direction);
+}
+
+
+void rotate_camera(t_scene *s, int keycode)
+{
+    if (keycode == KEY_UP)
+        s->camera.pitch += 3.0f;
+    else if (keycode == KEY_DOWN)
+        s->camera.pitch -= 3.0f;
+    else if (keycode == KEY_LEFT)
+        s->camera.yaw  += 3.0f;
+    else if (keycode == KEY_RIGHT)
+        s->camera.yaw  -= 3.0f;
+    update_camera_target(&s->camera, s->camera.pitch, s->camera.yaw);
+    compute_camera_basis(&s->camera);
+}
+ 
+
 int key_hook(int keycode, void *scene)
 {
     t_scene *s = (t_scene *)scene;
-    t_vec3 obj_dir = {0};     // Direction to move selected object
-    t_vec3 cam_dir = {0};     // Direction to move camera
-    float  speed   = 0.5f;    // Movement speed
 
     printf("Key pressed: %d\n", keycode);
 
-    // Object movement keys (WASD + arrows)
-    if (keycode == 119)        obj_dir.z =  speed;   // W
-    else if (keycode == 115)   obj_dir.z = -speed;   // S
-    else if (keycode == 97)    obj_dir.x = -speed;   // A
-    else if (keycode == 100)   obj_dir.x =  speed;   // D
-    else if (keycode == 65362) obj_dir.y =  speed;   // ↑
-    else if (keycode == 65364) obj_dir.y = -speed;   // ↓
-
-    // Object rotation (Q, E)
-    else if (keycode == 113 && s->selected_mesh)      // Q
-        rotate_object(s->selected_mesh, -5.0f);
-    else if (keycode == 101 && s->selected_mesh)      // E
-        rotate_object(s->selected_mesh, 5.0f);
-
-    // Camera movement (IJKLUO)
-    else if (keycode == 105)   cam_dir.z =  speed;    // I
-    else if (keycode == 107)   cam_dir.z = -speed;    // K
-    else if (keycode == 106)   cam_dir.x = -speed;    // J
-    else if (keycode == 108)   cam_dir.x =  speed;    // L
-    else if (keycode == 117)   cam_dir.y =  speed;    // U
-    else if (keycode == 111)   cam_dir.y = -speed;    // O
-
-    // Exit (ESC)
-    else if (keycode == 65307)
+    if (keycode == 65307)
         exit(0);
 
-    // If object selected and movement requested
-    if (s->selected_mesh && (obj_dir.x || obj_dir.y || obj_dir.z))
+    if (s->selected_mesh)
     {
-        t_vec3 move = vec3_add(
-                         vec3_add(vec3_mult(s->camera.right,   obj_dir.x),
-                                  vec3_mult(s->camera.up,      obj_dir.y)),
-                                  vec3_mult(s->camera.forward, obj_dir.z));
-        move_object(s->selected_mesh, move);
+        move_object(s, keycode);
+        rotate_objects(s, keycode);
     }
-
-    // Move camera
-    if (cam_dir.x || cam_dir.y || cam_dir.z)
-    {
-        t_vec3 move = vec3_add(
-                         vec3_add(vec3_mult(s->camera.right,   cam_dir.x),
-                                  vec3_mult(s->camera.up,      cam_dir.y)),
-                                  vec3_mult(s->camera.forward, cam_dir.z));
-        move_camera(&s->camera, move);
-    }
-
+    rotate_camera(s, keycode);
+    move_camera(s, keycode);
     render(s);
     return 0;
 }
