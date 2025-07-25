@@ -21,11 +21,11 @@ t_vec3 compute_lighting(t_hit h, t_scene *scene)
     to_light = vec3_normalize(to_light);
 
     t_ray shadow_ray;
-    shadow_ray.origin = vec3_add(h.p, vec3_mult(h.n, 1e-6));
+    shadow_ray.origin = vec3_add(h.p, vec3_mult(h.n, 0));
     shadow_ray.direction = to_light;
 
     t_hit hit_p = hit_scene(scene->meshes, &shadow_ray);
-    if (hit_p.t > 1e-6 && hit_p.t < light_distance)
+    if (hit_p.t > 0 && hit_p.t < light_distance)
         return ambient;
      
     /* === Diffuse === */
