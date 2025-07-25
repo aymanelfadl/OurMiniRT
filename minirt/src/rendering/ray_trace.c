@@ -14,9 +14,9 @@ t_hit  hit_scene(t_list *meshes, t_ray *ray)
         if      (obj->type == SPHERE)
             is_hit = ray_sphere(ray, &obj->sphere,   &h);
         else if (obj->type == PLANE)
-            is_hit = ray_plane    (ray, &obj->plane,    &h);
+            is_hit = ray_plane(ray, &obj->plane,    &h);
         else if (obj->type == CYLINDER)
-            is_hit = ray_cylinder (ray, &obj->cylinder, &h);
+            is_hit = ray_cylinder(ray, &obj->cylinder, &h);
             
         if (is_hit && h.t < closest.t)
         {

@@ -73,7 +73,7 @@ void move_object(t_scene *s, int keycode)
         obj_dir.y =  SPEED;
     else if (keycode == KEY_MINUS) 
         obj_dir.y = -SPEED;
-        
+
     move = vec3_add(vec3_add(vec3_mult(s->camera.right,   obj_dir.x),
                                     vec3_mult(s->camera.up,      obj_dir.y)),
                                     vec3_mult(s->camera.forward, obj_dir.z));
@@ -97,8 +97,7 @@ void scale_object(t_scene *s, int keycode)
     if (s->selected_mesh->type == SPHERE)
     {
         s->selected_mesh->sphere.radius *= scale;
-        s->selected_mesh->sphere.radius =
-            fmaxf(s->selected_mesh->sphere.radius, 0.01f);
+        s->selected_mesh->sphere.radius = fmaxf(s->selected_mesh->sphere.radius, 0.01f);
     }
     /* add cylinder here if you want to scale radius+height */
 }
