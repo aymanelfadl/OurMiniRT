@@ -39,7 +39,7 @@ void move_object(t_scene *s, int keycode);
 void scale_object(t_scene *s, int keycode);
 
 // camera hooks : 
-void rotate_camera(t_scene *s, int keycode);
+void rotate_camera(t_camera *cam, int keycode);
 void move_camera(t_scene *s, int keycode);
 
 

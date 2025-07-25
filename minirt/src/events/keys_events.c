@@ -9,6 +9,9 @@ int key_hook(int keycode, void *scene)
     if (keycode == 65307)
         exit(0);
 
+    printf("befor any events:\n");
+    print_debug(s);
+
     if (s->selected_mesh)
     {
         move_object(s, keycode);
@@ -18,5 +21,8 @@ int key_hook(int keycode, void *scene)
     rotate_camera(s, keycode);
     move_camera(s, keycode);
     render(s);
+    printf("after any events:\n");
+    print_debug(s);
+
     return 0;
 }

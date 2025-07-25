@@ -54,14 +54,16 @@ t_camera *parse_camera(char *cam_args)
     cam->origin = get_coordinates(content[0]);
     cam->target = get_coordinates(content[1]);
     cam->fov_deg = ft_atoi(content[2]);
-    cam->aspect_ratio = WIDTH / HEIGHT;
+    cam->aspect_ratio = (double)WIDTH / (double)HEIGHT;
     cam->focal_length = 1.0;
-    cam->yaw = 0.0f;
-    cam->pitch = 0.0f;
-
+    t_vec3 dir = vec3_normalize(vec3_sub(cam->target, cam->origin));
+    cam->pitch = asinf(dir.y);
+    cam->yaw = atan2f(dir.x, -dir.z);
+    
     ft_free_split(content);
     return cam;
 }
+
 
 t_ambient *parse_ambient(char *amb_args)
 {
