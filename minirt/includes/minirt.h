@@ -69,6 +69,8 @@ typedef struct s_camera {
     double viewport_height;
     double aspect_ratio;
     double focal_length;
+    float  pitch;   // in degrees
+    float  yaw; 
 } t_camera;
 
 /* MLX variables structure */

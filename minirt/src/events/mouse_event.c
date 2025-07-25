@@ -5,8 +5,7 @@ int mouse_move_hook(int keycode, int x, int y, void *param)
     t_scene *scene = (t_scene *)param;
 
     printf("Mouse: keycode=%d, x=%d, y=%d\n", keycode, x, y);
-
-    // Build ray from camera
+    
     t_vec3 dir = get_ray_direction(&scene->camera, x, y, WIDTH, HEIGHT);
     t_ray ray = (t_ray){scene->camera.origin, dir};
 
