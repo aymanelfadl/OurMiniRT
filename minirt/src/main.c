@@ -72,6 +72,54 @@ void print_meshes(const t_list *meshes)
     printf("------------------------------\n");
 }
 
+void print_debug(t_scene *s)
+{
+    printf("\n===== DEBUG INFO =====\n");
+
+    // Camera Position
+    printf("[Camera]\n");
+    printf("  Origin : x=%.2f y=%.2f z=%.2f\n", 
+           s->camera.origin.x, s->camera.origin.y, s->camera.origin.z);
+    printf("  Target : x=%.2f y=%.2f z=%.2f\n", 
+           s->camera.target.x, s->camera.target.y, s->camera.target.z);
+
+    // Camera Basis
+    printf("  Forward: x=%.2f y=%.2f z=%.2f\n", 
+           s->camera.forward.x, s->camera.forward.y, s->camera.forward.z);
+    printf("  Right  : x=%.2f y=%.2f z=%.2f\n", 
+           s->camera.right.x, s->camera.right.y, s->camera.right.z);
+    printf("  Up     : x=%.2f y=%.2f z=%.2f\n", 
+           s->camera.up.x, s->camera.up.y, s->camera.up.z);
+
+    // Selected Object Position
+    printf("\n[Selected Object]\n");
+
+    if (!s->selected_mesh)
+    {
+        printf("  No object selected.\n");
+        return;
+    }
+
+    if (s->selected_mesh->type == SPHERE)
+    {
+        t_vec3 pos = s->selected_mesh->sphere.center;
+        printf("  Sphere Center  : x=%.2f y=%.2f z=%.2f\n", pos.x, pos.y, pos.z);
+    }
+    else if (s->selected_mesh->type == PLANE)
+    {
+        t_vec3 pos = s->selected_mesh->plane.point;
+        printf("  Plane Point    : x=%.2f y=%.2f z=%.2f\n", pos.x, pos.y, pos.z);
+    }
+    else if (s->selected_mesh->type == CYLINDER)
+    {
+        t_vec3 pos = s->selected_mesh->cylinder.center;
+        printf("  Cylinder Center: x=%.2f y=%.2f z=%.2f\n", pos.x, pos.y, pos.z);
+    }
+
+    printf("======================\n");
+}
+
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)

@@ -54,6 +54,7 @@ void rotate_objects(t_scene *s, int keycode)
         rotate_object(s->selected_mesh, -5.0f, 2);
     else if (keycode == 99)
         rotate_object(s->selected_mesh, 5.0f, 2);
+    compute_camera_basis(&s->camera);
 }
 
 void move_object(t_scene *s, int keycode)
