@@ -2,13 +2,17 @@
 
 void compute_camera_basis(t_camera *cam)
 {
-    t_vec3 world_up;
+    cam->forward.x = cosf(cam->pitch) * sinf(cam->yaw);
+    cam->forward.y = sinf(cam->pitch);
+    cam->forward.z = -cosf(cam->pitch) * cosf(cam->yaw);
+    cam->forward = vec3_normalize(cam->forward);
     
-    world_up = (t_vec3){0, 1, 0};
-
-    cam->forward = vec3_normalize(vec3_sub(cam->target, cam->origin));
+    // Safer world up selection
+    t_vec3 world_up = fabs(cam->forward.y) > 0.999f  ? (t_vec3){0, 0, 1} : (t_vec3){0, 1, 0};
+    
+    // Step 3: Build right and up (choose consistent cross order)
     cam->right = vec3_normalize(vec3_cross(world_up, cam->forward));
-    cam->up = vec3_cross(cam->forward, cam->right);
+    cam->up    = vec3_cross(cam->forward, cam->right);
 }
 
 void setup_viewport(t_camera *cam)

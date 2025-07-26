@@ -56,6 +56,7 @@ t_camera *parse_camera(char *cam_args)
     cam->fov_deg = ft_atoi(content[2]);
     cam->aspect_ratio = (double)WIDTH / (double)HEIGHT;
     cam->focal_length = 1.0;
+    
     t_vec3 dir = vec3_normalize(vec3_sub(cam->target, cam->origin));
     cam->pitch = asinf(dir.y);
     cam->yaw = atan2f(dir.x, -dir.z);

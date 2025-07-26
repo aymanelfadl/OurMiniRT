@@ -1,17 +1,5 @@
 #include "minirt.h"
 
-void update_camera_target(t_camera *cam, float pitch, float yaw)
-{
-    cam->pitch = pitch;
-    cam->yaw = yaw;
-
-    cam->forward.x = cosf(cam->pitch) * sinf(cam->yaw);
-    cam->forward.y = sinf(cam->pitch);
-    cam->forward.z = -cosf(cam->pitch) * cosf(cam->yaw);
-
-    cam->target = vec3_add(cam->origin, cam->forward);
-}
-
 void rotate_camera(t_camera *cam, int keycode)
 {
     float delta = 3.0f * M_PI / 180.0f;
@@ -21,7 +9,6 @@ void rotate_camera(t_camera *cam, int keycode)
     else if (keycode == KEY_LEFT)  cam->yaw   += delta;
     else if (keycode == KEY_RIGHT) cam->yaw   -= delta;
 
-    update_camera_target(cam, cam->pitch, cam->yaw);
     compute_camera_basis(cam);
 }
 
@@ -41,7 +28,5 @@ void move_camera(t_scene *s, int keycode)
                  vec3_mult(s->camera.up, cam_dir.y)),
         vec3_mult(s->camera.forward, cam_dir.z)
     );
-
     s->camera.origin = vec3_add(s->camera.origin, move);
-    update_camera_target(&s->camera, s->camera.pitch, s->camera.yaw);
 }
