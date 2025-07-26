@@ -14,7 +14,16 @@ int ray_sphere(t_ray *r, t_sphere *s, t_hit *h)
     float t1 = (-b - sqrtf(delta)) / (2.f * a);
     float t2 = (-b + sqrtf(delta)) / (2.f * a);
 
-    h->t = fminf(t1, t2);
+    float t = INFINITY;
+    if (t1 > 0.001f && t1 < t)
+        t = t1;
+    if (t2 > 0.001f && t2 < t)
+        t = t2;
+
+    if (t == INFINITY)
+        return 0;
+
+    h->t = t;
     h->p = vec3_add(r->origin, vec3_mult(r->direction, h->t));
     h->n = vec3_normalize(vec3_sub(h->p, s->center));
     h->color = s->color;
